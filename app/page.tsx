@@ -1,28 +1,47 @@
 import Link from "next/link";
 import { ProofTile } from "@/components/ProofTile";
+import { MarketsTable } from "@/components/MarketsTable";
 import { naipTileUrl } from "@/lib/naip";
+import { listCounties } from "@/lib/api";
 
+// Server-fetched at request time so the markets list mirrors what /v1/counties
+// actually serves (24 today, growing). No Vercel cache window — counties drift
+// only on backend deploys, but stale data here would mis-sell coverage.
+export const dynamic = "force-dynamic";
+
+// Pin coordinates derived from blue-pixel cluster centroids in the source
+// Scottsdale tile (scottsdale-pool-sample__33.60530_-111.92140_160_640.jpg).
+// See /tmp/find_pools.py for the detector. Truth on the marker count is
+// load-bearing — the brand commits to "photo on every row, refunded if wrong,"
+// so any pin that doesn't sit over a real pool undercuts the product claim.
 const HERO_PINS = [
-  { x: 18, y: 32, n: 1 }, { x: 41, y: 21, n: 2 }, { x: 64, y: 36, n: 3 },
-  { x: 77, y: 22, n: 4 }, { x: 30, y: 58, n: 5 }, { x: 52, y: 64, n: 6 },
-  { x: 73, y: 71, n: 7 }, { x: 25, y: 84, n: 8 }, { x: 60, y: 88, n: 9 },
+  { x: 67, y: 3,  n: 1 }, // top blue pool
+  { x: 22, y: 36, n: 2 }, // mid-left blue pool by orange-roofed house
+  { x: 91, y: 30, n: 3 }, // upper-right kidney pool
+  { x: 8,  y: 98, n: 4 }, // lower-left small pool
+  { x: 72, y: 89, n: 5 }, // lower-right rectangular pool
 ];
 
 const SAMPLE_BOXES = [
   { x: 38, y: 46, w: 14, h: 18 }, // a single backyard pool detection
 ];
 
-const MARKETS = [
-  { name: "Phoenix metro", county: "AZ:Maricopa", pools: "approx tens of thousands", note: "live" },
-  { name: "Riverside",     county: "CA:Riverside", pools: "approx tens of thousands", note: "live" },
-  { name: "Orange County", county: "CA:Orange",    pools: "approx tens of thousands", note: "live" },
-  { name: "LA County",     county: "CA:LosAngeles",pools: "approx hundreds of thousands", note: "live" },
-  { name: "Hillsborough",  county: "FL:Hillsborough", pools: "approx tens of thousands", note: "live" },
-  { name: "Charleston",    county: "SC:Charleston", pools: "approx tens of thousands", note: "live" },
-  { name: "Mecklenburg",   county: "NC:Mecklenburg", pools: "approx tens of thousands", note: "live" },
-];
+export default async function Page() {
+  // Fetch live markets server-side. If the backend is unreachable, render an
+  // empty list rather than 500 the page — user can still order via /run.
+  let markets: { key: string; state: string; county: string }[] = [];
+  try {
+    const r = await listCounties();
+    markets = r.counties
+      // Hide archived/internal adapters from public marketing surface.
+      // Backend filter is by `pool_x_parcel` block presence; archived rows
+      // sometimes still carry that block during deprecation.
+      .filter((c) => !/_archived$|_legacy$|^_/.test(c.key))
+      .map((c) => ({ key: c.key, state: c.state, county: c.county }));
+  } catch {
+    markets = [];
+  }
 
-export default function Page() {
   return (
     <>
       {/* HERO ----------------------------------------------------- */}
@@ -59,7 +78,7 @@ export default function Page() {
               className="aspect-square"
             />
             <p className="legend mt-3">
-              SCOTTSDALE · SAMPLE NEIGHBORHOOD SCAN · 9 verified pools
+              SCOTTSDALE · SAMPLE NEIGHBORHOOD SCAN · 5 verified pools
             </p>
           </div>
         </div>
@@ -86,7 +105,7 @@ export default function Page() {
               alt="Glendale block with v32 pool detection box overlaid"
               boxes={SAMPLE_BOXES}
               pins={[{ x: 45, y: 55, n: 1 }]}
-              className="aspect-[4/3]"
+              className="aspect-square"
             />
             <p className="legend mt-3">
               GLENDALE · POOL DETECTION · CONF 0.92 · MAY 2026 IMAGERY
@@ -127,30 +146,17 @@ export default function Page() {
           <h2 className="mb-12 max-w-3xl">
             Counties that <em>cover</em> the operators we serve.
           </h2>
-          <div className="border rule">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b rule">
-                  <th className="text-left py-4 px-6 legend">Market</th>
-                  <th className="text-left py-4 px-6 legend">County</th>
-                  <th className="text-left py-4 px-6 legend">Estimated pools</th>
-                  <th className="text-right py-4 px-6 legend">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MARKETS.map((m) => (
-                  <tr key={m.county} className="border-b rule last:border-b-0">
-                    <td className="py-4 px-6 font-display text-2xl leading-none">{m.name}</td>
-                    <td className="py-4 px-6 font-mono text-xs">{m.county}</td>
-                    <td className="py-4 px-6 text-[var(--color-muted)]">{m.pools}</td>
-                    <td className="py-4 px-6 text-right">
-                      <span className="legend text-[var(--color-signal)]">● {m.note}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {markets.length > 0 ? (
+            <MarketsTable markets={markets} />
+          ) : (
+            <p className="border rule p-8 font-mono text-sm text-[var(--color-muted)]">
+              Markets list temporarily unavailable. Visit{" "}
+              <Link href="/run" className="text-[var(--color-ink)] underline underline-offset-4">
+                /run
+              </Link>{" "}
+              to see all live counties.
+            </p>
+          )}
           <p className="legend mt-6">
             Don't see your market?{" "}
             <Link href="mailto:hello@get-plot.com" className="text-[var(--color-ink)] underline underline-offset-4">
