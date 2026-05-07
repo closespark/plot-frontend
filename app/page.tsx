@@ -139,6 +139,48 @@ export default async function Page() {
         </div>
       </section>
 
+      {/* INTEGRATIONS -------------------------------------------- */}
+      <section id="integrations" className="border-b rule">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
+          <div className="grid lg:grid-cols-12 gap-12 mb-16">
+            <div className="lg:col-span-7">
+              <p className="legend mb-6">/ Integrations</p>
+              <h2 className="mb-6">
+                Land in the tools<br />
+                <span className="italic text-[var(--color-signal)]">your team already uses</span>.
+              </h2>
+              <p className="text-lg leading-relaxed max-w-2xl">
+                <span className="em-dash" />Skip the CSV. Push verified leads straight to your CRM. Mail
+                postcards through our printer rail without leaving Plot. Pick
+                what fits your workflow — connect once, every future scan
+                routes automatically.
+              </p>
+            </div>
+            <div className="lg:col-span-5 lg:flex lg:items-end lg:justify-end">
+              <Link href={"/settings/integrations" as any} className="btn-ink">
+                Connect your stack →
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
+            <IntegrationGroup
+              tag="● CRM destinations"
+              title="Send leads where the work happens."
+              body="Pool & solar shops run their day on Jobber or Housecall Pro. Marketing-mature ops layer HubSpot on top. We push to all three — leads land tagged ‘Plot' as the source, ready to dispatch."
+              vendors={["Jobber", "Housecall Pro", "HubSpot"]}
+            />
+            <IntegrationGroup
+              tag="● Postcard rail"
+              title="Mail without the mailshop."
+              body="Stannp prints and mails on your behalf — USPS Marketing Mail, postage included. From $0.50 per piece. You set the design once, approve cost per batch."
+              vendors={["Stannp"]}
+              comingSoon={["Click2Mail", "PostGrid"]}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* MARKETS ------------------------------------------------- */}
       <section id="sample" className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
@@ -307,6 +349,38 @@ function OfferCard({ tag, title, body }: { tag: string; title: string; body: str
       <p className="legend mb-6">{tag}</p>
       <h3 className="mb-4">{title}</h3>
       <p className="leading-relaxed text-[var(--color-muted)]">{body}</p>
+    </div>
+  );
+}
+
+function IntegrationGroup({
+  tag, title, body, vendors, comingSoon = [],
+}: {
+  tag: string;
+  title: string;
+  body: string;
+  vendors: string[];
+  comingSoon?: string[];
+}) {
+  return (
+    <div className="bg-[var(--color-paper)] p-10">
+      <p className="legend mb-6">{tag}</p>
+      <h3 className="mb-4">{title}</h3>
+      <p className="leading-relaxed text-[var(--color-muted)] mb-8">{body}</p>
+      <ul className="space-y-px">
+        {vendors.map((v) => (
+          <li key={v} className="border-t rule pt-3 flex items-center justify-between">
+            <span className="font-display text-xl">{v}</span>
+            <span className="legend">● Supported</span>
+          </li>
+        ))}
+        {comingSoon.map((v) => (
+          <li key={v} className="border-t rule pt-3 flex items-center justify-between">
+            <span className="font-display text-xl text-[var(--color-muted)]">{v}</span>
+            <span className="legend text-[var(--color-muted)]">○ Coming soon</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

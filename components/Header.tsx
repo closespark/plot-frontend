@@ -14,8 +14,9 @@ export function Header() {
           <Link href="/run" className="hover:text-[var(--color-ink)]">Run a Pilot</Link>
           <Link href="/examples" className="hover:text-[var(--color-ink)]">Examples</Link>
           <Link href="/#how" className="hover:text-[var(--color-ink)]">How it works</Link>
+          <Link href="/#integrations" className="hover:text-[var(--color-ink)]">Integrations</Link>
           <Link href="/#pricing" className="hover:text-[var(--color-ink)]">Pricing</Link>
-          <Link href="/imagery-privacy" className="hover:text-[var(--color-ink)]">Imagery</Link>
+          <Link href={"/settings/integrations" as any} className="hover:text-[var(--color-ink)]">Settings</Link>
         </nav>
         <Link href="/run" className="btn-ink">
           Get access →

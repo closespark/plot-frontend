@@ -1,5 +1,6 @@
 import { listCounties } from "@/lib/api";
 import { OrderForm } from "@/components/OrderForm";
+import { listConnections, getVendor } from "@/lib/integrations";
 
 export const metadata = {
   title: "Run a pilot · Plot",
@@ -16,6 +17,17 @@ export default async function RunPage() {
   } catch (e: any) {
     apiError = e?.message ?? "API unreachable";
   }
+
+  // Disconnected mode: listConnections() returns []. Once OAuth ships,
+  // this resolves to the tenant's actual connected CRMs and the OrderForm
+  // dropdown surfaces them without any other change.
+  const connections = await listConnections();
+  const connectedCrms = connections
+    .map((c) => ({ id: c.vendorId, name: getVendor(c.vendorId)?.name || c.vendorId }))
+    .filter((c) => {
+      const v = getVendor(c.id);
+      return v?.kind === "crm";
+    });
 
   return (
     <section>
@@ -46,7 +58,7 @@ export default async function RunPage() {
             </div>
           )}
 
-          <OrderForm counties={counties} />
+          <OrderForm counties={counties} connectedCrms={connectedCrms} />
         </div>
 
         <aside className="lg:col-span-5 lg:sticky lg:top-24 lg:self-start">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Order } from "@/lib/api";
+import { PostcardAddOn } from "@/components/PostcardAddOn";
 
 const POLL_MS = 8000;
 // Show a "lost connection" banner after this many back-to-back failed polls.
@@ -60,18 +61,28 @@ export function OrderStatusLive({ initial }: { initial: Order }) {
         </p>
       )}
       {order.state === "done" && (
-        <div className="mt-12 flex flex-col sm:flex-row gap-3">
-          <a
-            href={`/api/orders/${order.id}/leads.csv`}
-            className="btn-ink"
-            download
-          >
-            Download CSV →
-          </a>
-          <a href="mailto:hello@get-plot.com" className="btn-ghost">
-            Report a wrong row ↳
-          </a>
-        </div>
+        <>
+          <PostcardAddOn
+            orderId={order.id}
+            leadCount={order.leads_count ?? 0}
+            // No connection state plumbed yet — disconnected mode for now.
+            // Once `listConnections` returns live rows, pass through whether
+            // a postcard provider is connected for this tenant.
+            postcardConnected={false}
+          />
+          <div className="mt-12 flex flex-col sm:flex-row gap-3">
+            <a
+              href={`/api/orders/${order.id}/leads.csv`}
+              className="btn-ink"
+              download
+            >
+              Download CSV →
+            </a>
+            <a href="mailto:hello@get-plot.com" className="btn-ghost">
+              Report a wrong row ↳
+            </a>
+          </div>
+        </>
       )}
       {order.state === "pending_payment" && order.stripe_checkout_url && (
         <a href={order.stripe_checkout_url} className="btn-ink">
