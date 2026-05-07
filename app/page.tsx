@@ -126,19 +126,34 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* WHAT THE SCAN SEES -------------------------------------- */}
-      <section id="how" className="border-b rule">
+      {/* WHAT THE SCAN SEES — image + inline stat callouts ------- */}
+      <section className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24 grid lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5 lg:sticky lg:top-24 lg:self-start">
             <p className="legend mb-6">/ What the scan sees</p>
-            <h2 className="mb-6">Every pool, pinned.</h2>
-            <p className="text-lg leading-relaxed mb-6">
-              One block in Maricopa County. Each marker is a verified pool, tied
-              to an address, with the current image attached to the row.
-              Multiply this across the metro and you have the database.
+            <h2 className="mb-6">
+              One block.<br />
+              <span className="italic text-[var(--color-signal)]">Every pool</span>, pinned.
+            </h2>
+            <p className="text-lg leading-relaxed text-[var(--color-muted)] mb-8">
+              <span className="em-dash" />Glendale, AZ — one residential block. The orange box is
+              the v32 model's detection; the pin is the verified pool tied
+              to a parcel record. Multiply this across a county and you
+              have the database.
             </p>
-            <p className="legend">
-              MARICOPA · SAMPLE BLOCK · 96.5% PRECISION VS ASSESSOR
+
+            {/* Stat callouts — inline product attestation */}
+            <dl className="grid grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
+              <SmallStat value="0.92" label="confidence on this pool" />
+              <SmallStat value="96.5%" label="precision vs assessor" />
+              <SmallStat value="v32" label="model version · current prod" />
+              <SmallStat value="May 2026" label="imagery date" />
+            </dl>
+
+            <p className="legend mt-6">
+              <Link href="/examples" className="text-[var(--color-ink)] underline underline-offset-4">
+                See more sample scans →
+              </Link>
             </p>
           </div>
           <div className="lg:col-span-7">
@@ -156,26 +171,35 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* HOW IT WORKS — 3 STEPS ---------------------------------- */}
-      <section className="border-b rule bg-[var(--color-deep)] text-[var(--color-paper)]">
+      {/* HOW IT WORKS — number-anchored cards -------------------- */}
+      <section id="how" className="border-b rule bg-[var(--color-deep)] text-[var(--color-paper)]">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
           <p className="legend-on-ink mb-6">/ Three steps</p>
-          <h2 className="mb-16 max-w-3xl">From market to CSV in hours, not days.</h2>
+          <h2 className="mb-16 max-w-3xl text-[var(--color-paper)]">
+            From market to CSV<br />
+            <span className="italic text-[var(--color-signal)]">in hours</span>, not days.
+          </h2>
           <ol className="grid md:grid-cols-3 gap-px bg-[var(--color-paper)]/15">
-            <Step
+            <NumStep
               n="01"
+              metric={liveCounties.toString()}
+              metricLabel={`live counties · ${statesCovered} states`}
               title="Pick a market"
-              body="Choose a county. We support 65–70% of US population today; missing markets get prioritized on request."
+              body="Choose a county. Missing markets get prioritized on request."
             />
-            <Step
+            <NumStep
               n="02"
-              title="Pay the pilot"
-              body="$15 minimum to start. Your county runs on demand — every single-family parcel scanned with current satellite imagery."
+              metric="$15"
+              metricLabel="minimum pilot · Stripe"
+              title="Pay & launch"
+              body="Your county runs on demand — every single-family parcel scanned with current satellite imagery."
             />
-            <Step
+            <NumStep
               n="03"
-              title="Download the list"
-              body="Address, owner data where available, current satellite image of the pool on every row. CSV out, ready for mail or door."
+              metric="< 24h"
+              metricLabel="typical delivery"
+              title="Download leads"
+              body="CSV with current satellite photo on every row. Or push directly to Jobber, Housecall Pro, or HubSpot."
             />
           </ol>
         </div>
@@ -251,64 +275,99 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* VS BROKERS ---------------------------------------------- */}
+      {/* VS BROKERS — attribute-row data table ------------------- */}
       <section id="pricing" className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
           <p className="legend mb-6">/ Vs brokers</p>
-          <h2 className="mb-16 max-w-4xl">
-            $0.10 stale data,<br />
-            or <span className="italic text-[var(--color-signal)]">$0.15 with proof</span>.
+          <h2 className="mb-12 max-w-4xl">
+            Same county.<br />
+            <span className="italic text-[var(--color-signal)]">Different data.</span>
           </h2>
-          <div className="grid md:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
-            <Compare
-              heading="Typical broker"
-              price="$0.10"
-              bullets={[
-                "Assessor records, often years out of date",
-                "Pool flag may be missing, wrong, or outdated",
-                "No visual confirmation",
-                "No refund — they've never seen the property",
-              ]}
-              accent={false}
+
+          <div className="border rule bg-[var(--color-paper)]">
+            {/* Header row */}
+            <div className="grid grid-cols-[minmax(140px,1fr)_1fr_1fr] md:grid-cols-[minmax(220px,1fr)_1fr_1fr] border-b rule">
+              <div className="px-6 py-5 legend">Attribute</div>
+              <div className="px-6 py-5 legend">Typical broker</div>
+              <div className="px-6 py-5 legend text-[var(--color-signal)]">Plot</div>
+            </div>
+
+            <CompareRow
+              label="Records source"
+              broker="Assessor exports, often years out of date"
+              plot="Live satellite scan, refreshed per order"
             />
-            <Compare
-              heading="Plot"
-              price="$0.15"
-              bullets={[
-                "Current satellite imagery on every row",
-                "96.5% precision vs assessor records",
-                "Surfaces pools the county missed (built without permits)",
-                "Refunded if the photo doesn't show what we said",
-              ]}
-              accent={true}
+            <CompareRow
+              label="Pool flag accuracy"
+              broker="~70% (assessor drift over 5 years)"
+              plot="96.5% precision vs assessor"
+              plotAccent
+            />
+            <CompareRow
+              label="Image on each row"
+              broker="None"
+              plot="Current satellite tile · linked from CSV"
+              plotAccent
+            />
+            <CompareRow
+              label="Catches unpermitted pools"
+              broker="No — assessor never re-checks"
+              plot="Yes — model sees what the records missed"
+            />
+            <CompareRow
+              label="Refund policy"
+              broker="None — they've never seen the property"
+              plot="$0.15 per wrong row · no cap, no escalation"
+              plotAccent
+            />
+            <CompareRow
+              label="Per-record price"
+              broker={<span className="font-display text-3xl text-[var(--color-muted)]">$0.10</span>}
+              plot={<span className="font-display text-3xl text-[var(--color-signal)]">$0.15</span>}
+              isPriceRow
             />
           </div>
+
+          <p className="legend mt-6 text-[var(--color-muted)] max-w-2xl">
+            Broker comparison is industry typical, not a specific vendor. Plot
+            numbers are live as of {new Date().toLocaleDateString("en-US", {
+              month: "long", year: "numeric",
+            })} — see <Link href="/imagery-privacy" className="text-[var(--color-ink)] underline underline-offset-4">methodology ↗</Link>.
+          </p>
         </div>
       </section>
 
-      {/* OFFER --------------------------------------------------- */}
+      {/* REFUND — promise quantified ----------------------------- */}
       <section id="refund" className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24 grid lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5">
-            <p className="legend mb-6">/ The offer</p>
+            <p className="legend mb-6">/ The promise, in numbers</p>
             <h2 className="mb-8">
-              Try it.<br /><span className="italic">Refund</span> what's wrong.
+              Refund what's wrong.<br />
+              <span className="italic text-[var(--color-signal)]">Quantified.</span>
             </h2>
-            <p className="text-lg leading-relaxed">
-              The visual confirmation isn't a marketing line. It's a refund promise.
-              Brokers can't make it. We do.
+            <p className="text-lg leading-relaxed text-[var(--color-muted)]">
+              <span className="em-dash" />The visual confirmation isn't a marketing line. It's a
+              refund promise. Brokers can't make it because they've never
+              looked at the property. We have. So we put numbers on it.
             </p>
           </div>
-          <div className="lg:col-span-7 grid md:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
-            <OfferCard
-              tag="● Pilot"
-              title="$15 minimum"
-              body="Pick a county, scan starts on payment. We deliver leads within 24 hours of order — usually faster."
+          <div className="lg:col-span-7 grid md:grid-cols-3 gap-px bg-[var(--color-hairline)] border rule">
+            <RefundStat
+              value="$0.15"
+              label="refunded per wrong row"
+              note="Same price you paid — credited back."
             />
-            <OfferCard
-              tag="● Validity guarantee"
-              title="Wrong? Refunded."
-              body="If a row's photo doesn't show what we said it shows — no pool — flag it. We refund the record. No tickets, no escalation."
+            <RefundStat
+              value="No cap"
+              label="on refunds per order"
+              note="Up to 100% of the order if every row is wrong."
+              accent
+            />
+            <RefundStat
+              value="1 email"
+              label="to claim · no tickets"
+              note={(<>Reply to your delivery, list bad parcel IDs, we credit. Reach <a href="mailto:hello@get-plot.com" className="text-[var(--color-ink)] underline underline-offset-4">hello@get-plot.com</a> directly.</>)}
             />
           </div>
         </div>
@@ -338,6 +397,18 @@ export default async function Page() {
         </div>
       </section>
     </>
+  );
+}
+
+/** Compact stat card used inline within content sections (e.g. under the
+ * scan-sees block). Smaller than BigStat — sized to live next to body
+ * copy without dominating it. */
+function SmallStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="bg-[var(--color-paper)] p-4">
+      <dd className="font-display text-2xl leading-none">{value}</dd>
+      <dt className="legend mt-2 text-[10px] tracking-[0.16em]">{label}</dt>
+    </div>
   );
 }
 
@@ -372,46 +443,81 @@ function compact(n: number): string {
   return n.toLocaleString();
 }
 
-function Step({ n, title, body }: { n: string; title: string; body: string }) {
+/** AirDNA-style step card — leads with a metric, then the action. The
+ * metric is the dominant text; the title + body explain it. Steps stack
+ * across the dark "How it works" band; the live counties number ties
+ * step 1 back to the hero stats. */
+function NumStep({
+  n, metric, metricLabel, title, body,
+}: {
+  n: string;
+  metric: string;
+  metricLabel: string;
+  title: string;
+  body: string;
+}) {
   return (
     <li className="bg-[var(--color-deep)] p-10">
-      <div className="flex items-baseline gap-4 mb-6">
+      <div className="flex items-baseline gap-4 mb-8">
         <span className="legend-on-ink text-[var(--color-signal)] text-sm">{n}</span>
         <span className="h-px flex-1 bg-[var(--color-paper)]/20" />
       </div>
-      <h3 className="text-[var(--color-paper)] mb-4">{title}</h3>
-      <p className="text-[var(--color-paper)]/70 leading-relaxed">{body}</p>
+      <p className="font-display text-6xl text-[var(--color-signal)] leading-none mb-2">
+        {metric}
+      </p>
+      <p className="legend-on-ink mb-8">{metricLabel}</p>
+      <h3 className="text-[var(--color-paper)] mb-3">{title}</h3>
+      <p className="text-[var(--color-paper)]/70 leading-relaxed text-base">{body}</p>
     </li>
   );
 }
 
-function Compare({ heading, price, bullets, accent }: { heading: string; price: string; bullets: string[]; accent: boolean }) {
+/** One row of the broker-vs-Plot comparison table. Default cell type is
+ * a plain string; pass JSX for the price row to drop in display-sized
+ * digits. `plotAccent` highlights the Plot side in signal-orange when the
+ * difference is the headline. */
+function CompareRow({
+  label, broker, plot, plotAccent, isPriceRow,
+}: {
+  label: string;
+  broker: React.ReactNode;
+  plot: React.ReactNode;
+  plotAccent?: boolean;
+  isPriceRow?: boolean;
+}) {
   return (
-    <div className={accent ? "bg-[var(--color-paper)] p-10" : "bg-[var(--color-paper)] p-10"}>
-      <p className={accent ? "legend text-[var(--color-signal)]" : "legend"}>
-        / {heading}
-      </p>
-      <p className={`font-display text-7xl mt-4 mb-8 ${accent ? "text-[var(--color-signal)]" : "text-[var(--color-muted)]"}`}>
-        {price}
-      </p>
-      <ul className="space-y-3">
-        {bullets.map((b) => (
-          <li key={b} className="flex gap-3 text-base">
-            <span className={`mt-2 block w-2 h-px ${accent ? "bg-[var(--color-signal)]" : "bg-[var(--color-muted)]"}`} />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
+    <div className={`grid grid-cols-[minmax(140px,1fr)_1fr_1fr] md:grid-cols-[minmax(220px,1fr)_1fr_1fr] border-b rule last:border-b-0 ${
+      isPriceRow ? "bg-[var(--color-paper)]" : ""
+    }`}>
+      <div className="px-6 py-5 legend">{label}</div>
+      <div className="px-6 py-5 text-sm text-[var(--color-muted)]">{broker}</div>
+      <div className={`px-6 py-5 text-sm ${
+        plotAccent ? "text-[var(--color-ink)] font-medium" : ""
+      }`}>{plot}</div>
     </div>
   );
 }
 
-function OfferCard({ tag, title, body }: { tag: string; title: string; body: string }) {
+/** Refund-section stat card: leads with the metric (typically $-amount or
+ * "No cap"), then the label, then a footnote justifying it. `accent`
+ * marks the no-cap card since unconditional refund is the brand wedge. */
+function RefundStat({
+  value, label, note, accent,
+}: {
+  value: string;
+  label: string;
+  note: React.ReactNode;
+  accent?: boolean;
+}) {
   return (
-    <div className="bg-[var(--color-paper)] p-10">
-      <p className="legend mb-6">{tag}</p>
-      <h3 className="mb-4">{title}</h3>
-      <p className="leading-relaxed text-[var(--color-muted)]">{body}</p>
+    <div className="bg-[var(--color-paper)] p-8">
+      <p className={`font-display text-5xl leading-none mb-2 ${
+        accent ? "text-[var(--color-signal)]" : ""
+      }`}>
+        {value}
+      </p>
+      <p className="legend mb-4">{label}</p>
+      <p className="text-sm leading-relaxed text-[var(--color-muted)]">{note}</p>
     </div>
   );
 }
