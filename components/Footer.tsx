@@ -15,6 +15,7 @@ export function Footer() {
         </div>
         <FooterCol heading="Product" items={[
           { label: "Run a pilot", href: "/run" },
+          { label: "Examples", href: "/examples" },
           { label: "How it works", href: "/#how" },
           { label: "Pricing", href: "/#pricing" },
           { label: "Sample inventory", href: "/#sample" },

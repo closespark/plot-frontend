@@ -12,6 +12,7 @@ export function Header() {
         </Link>
         <nav className="hidden md:flex items-center gap-8 legend">
           <Link href="/run" className="hover:text-[var(--color-ink)]">Run a Pilot</Link>
+          <Link href="/examples" className="hover:text-[var(--color-ink)]">Examples</Link>
           <Link href="/#how" className="hover:text-[var(--color-ink)]">How it works</Link>
           <Link href="/#pricing" className="hover:text-[var(--color-ink)]">Pricing</Link>
           <Link href="/imagery-privacy" className="hover:text-[var(--color-ink)]">Imagery</Link>
