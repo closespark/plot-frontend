@@ -17,8 +17,13 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     const loc = r.headers.get("location");
     if (loc) return NextResponse.redirect(loc, 302);
   }
-  return NextResponse.json(
-    { detail: `unexpected upstream status ${r.status}` },
-    { status: r.status },
-  );
+  // Forward the backend's body so the user sees "order is done, no leads yet"
+  // (or whatever the real reason is) instead of "unexpected upstream status N".
+  const raw = await r.text().catch(() => "");
+  let detail = raw || `upstream returned ${r.status} with no body`;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.detail === "string") detail = parsed.detail;
+  } catch { /* not JSON */ }
+  return NextResponse.json({ detail }, { status: r.status });
 }

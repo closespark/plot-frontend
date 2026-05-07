@@ -22,7 +22,12 @@ export function OrderForm({ counties }: { counties: County[] }) {
       body: JSON.stringify({ customer_email: email, county, min_score }),
     });
     if (!r.ok) {
-      setError(`Server error: ${r.status} — please try again or email hello@get-plot.com`);
+      // Surface the backend's `detail` (e.g. "unsupported county: ...") instead
+      // of just the status code. 4xx is the user's fix, 5xx is ours.
+      const body = await r.json().catch(() => null);
+      const detail = body?.detail || r.statusText || "unknown error";
+      const prefix = r.status >= 500 ? "Server error" : "Couldn't start order";
+      setError(`${prefix}: ${detail} — if this persists, email hello@get-plot.com`);
       return;
     }
     const order = await r.json();

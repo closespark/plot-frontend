@@ -4,25 +4,61 @@ import { useEffect, useState } from "react";
 import type { Order } from "@/lib/api";
 
 const POLL_MS = 8000;
+// Show a "lost connection" banner after this many back-to-back failed polls.
+// 3 * 8s = ~24s of silence — long enough to ride out a brief network blip,
+// short enough that the user knows the page isn't dead.
+const POLL_FAIL_WARN_THRESHOLD = 3;
+// After this long in `running`, show stuck-worker copy (typical run is
+// 30 min – 6 hr depending on county size; past 6h something's wrong).
+const STUCK_RUNNING_AFTER_SEC = 6 * 60 * 60;
 const TERMINAL = new Set(["done", "failed"]);
 
 export function OrderStatusLive({ initial }: { initial: Order }) {
   const [order, setOrder] = useState<Order>(initial);
+  const [pollFails, setPollFails] = useState(0);
 
   useEffect(() => {
     if (TERMINAL.has(order.state)) return;
     const t = setInterval(async () => {
-      const r = await fetch(`/api/orders/${order.id}`, { cache: "no-store" });
-      if (!r.ok) return;
-      const o: Order = await r.json();
-      setOrder(o);
+      try {
+        const r = await fetch(`/api/orders/${order.id}`, { cache: "no-store" });
+        if (!r.ok) {
+          setPollFails((n) => n + 1);
+          return;
+        }
+        const o: Order = await r.json();
+        setOrder(o);
+        setPollFails(0);
+      } catch {
+        setPollFails((n) => n + 1);
+      }
     }, POLL_MS);
     return () => clearInterval(t);
   }, [order.id, order.state]);
 
+  const stuckRunning =
+    order.state === "running" &&
+    order.started_at != null &&
+    Date.now() / 1000 - order.started_at > STUCK_RUNNING_AFTER_SEC;
+
   return (
     <>
       <Progress order={order} />
+      {pollFails >= POLL_FAIL_WARN_THRESHOLD && !TERMINAL.has(order.state) && (
+        <p className="border rule mt-6 px-6 py-4 font-mono text-sm text-[var(--color-signal)]">
+          Can't reach the status API right now ({pollFails} failed checks). Your
+          scan is unaffected — refresh in a moment, or check back via the email
+          we'll send when it's done.
+        </p>
+      )}
+      {stuckRunning && (
+        <p className="border rule mt-6 px-6 py-4 font-mono text-sm text-[var(--color-signal)]">
+          This scan has been running longer than expected. Your data is safe and
+          we've been alerted — email hello@get-plot.com with order id{" "}
+          <span className="text-[var(--color-ink)]">{order.id}</span> if you'd
+          like an update.
+        </p>
+      )}
       {order.state === "done" && (
         <div className="mt-12 flex flex-col sm:flex-row gap-3">
           <a
