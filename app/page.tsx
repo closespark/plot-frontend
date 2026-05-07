@@ -126,9 +126,9 @@ export default async function Page() {
               title="Verified pool homeowners, mailed when the work shows up"
               icp="Pool service · cleaning · repair · screen-enclosure restoration"
               triggers={[
-                "Freeze events (TX-Uri pattern · 500% repair-estimate spike)",
+                "Freeze events (~500% repair-estimate spike)",
                 "Hurricane wind on screen enclosures (FL/GA · $20–50K AOV)",
-                "Pool permit pulled (renovation signal · no free national feed)",
+                "Pool permit pulled (renovation signal)",
                 "Just-sold homeowner with a verified pool",
                 "Spring opening + pump age 8–10 yrs (calendar-driven)",
               ]}
@@ -142,10 +142,10 @@ export default async function Page() {
               icp="Panel cleaning · maintenance · battery retrofit · post-storm O&M"
               triggers={[
                 "Solar permit pulled (battery / expansion signal)",
-                "NEM 3.0 deadline pressure (CA · April 2026 cohort)",
-                "NEM interconnection age (CA + NY · LBNL national baseline)",
-                "Panels installed 7+ years ago (LBNL Tracking the Sun)",
-                "Post-PTO 90-day O&M attach window",
+                "Regulatory deadline pressure (CA · April 2026 cohort)",
+                "Interconnection age (CA + NY · national baseline)",
+                "Panels installed 7+ years ago",
+                "Post-install 90-day O&M attach window",
               ]}
               cta={{ label: "Run a solar pilot →", href: "/run" }}
               live
@@ -208,10 +208,10 @@ export default async function Page() {
             <span className="italic text-[var(--color-signal)]">We watch the signals</span>.
           </h2>
           <p className="text-lg leading-relaxed text-[var(--color-muted)] max-w-3xl mb-12">
-            <span className="em-dash" />Pick the events that matter. We monitor public feeds — NWS,
-            CPUC dockets, county permit portals, LBNL system age — and fire
-            the postcard batch into your dashboard for review. You approve
-            the batch. We mail.
+            <span className="em-dash" />Pick the events that matter. We monitor a stack of public
+            feeds — weather alerts, regulatory dockets, county permit portals,
+            system-age data — and fire the postcard batch into your dashboard
+            for review. You approve the batch. We mail.
           </p>
 
           <div className="grid lg:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
@@ -220,14 +220,14 @@ export default async function Page() {
               <div className="space-y-px">
                 <TriggerRow
                   name="Freeze events"
-                  source="NWS LSR · hard-freeze warning"
+                  source="Hard-freeze warning"
                   event="Freeze warning issued for [zip]"
                   window="~24h response"
-                  note="500% historical service-call spike (TX-Uri pattern)"
+                  note="~500% historical service-call spike"
                 />
                 <TriggerRow
                   name="Hurricane wind"
-                  source="NHC tracks · post-event"
+                  source="Post-event tracks"
                   event="Cat-1+ wind crossing your service zips"
                   window="24–72h"
                   note="Pool screen enclosures · $20–50K AOV"
@@ -241,7 +241,7 @@ export default async function Page() {
                 />
                 <TriggerRow
                   name="Just-sold + pool"
-                  source="County recorder · ATTOM intersection"
+                  source="County recorder · sale-event match"
                   event="Deed recorded for parcel with verified pool"
                   window="30 days"
                   note="6-month higher-spend window"
@@ -267,29 +267,29 @@ export default async function Page() {
                   note="Pre-existing panels = retrofit; none = new install"
                 />
                 <TriggerRow
-                  name="NEM 3.0 deadline"
-                  source="CA CPUC · regulatory calendar"
-                  event="T-30 days to grandfathering cutoff"
+                  name="Regulatory deadline"
+                  source="State regulatory calendar"
+                  event="T-30 days to a grandfathering cutoff"
                   window="30 days"
-                  note="Closest 2026 analog to a HailTrace event"
+                  note="Closest 2026 analog to a major-event trigger"
                 />
                 <TriggerRow
-                  name="NEM interconnection age"
-                  source="CA-DGStats + NY Open Data"
+                  name="Interconnection age"
+                  source="State-utility data feeds"
                   event="Interconnection filing 7+ years ago"
                   window="Calendar"
-                  note="CA + NY only at v1 · LBNL national fallback"
+                  note="CA + NY at v1 · national fallback for the rest"
                 />
                 <TriggerRow
                   name="Panels older than 7 yrs"
-                  source="LBNL Tracking the Sun · ~4.5M systems"
+                  source="National installer-data baseline"
                   event="System age threshold met"
                   window="Calendar"
                   note="Nobody assembles this product today"
                 />
                 <TriggerRow
-                  name="Post-PTO 90-day window"
-                  source="PTO date · per-utility"
+                  name="Post-install 90-day window"
+                  source="Permission-to-operate date · per-utility"
                   event="90 days after permission-to-operate"
                   window="90 days"
                   note="Solar O&M fastest-growing labor category"
@@ -328,14 +328,14 @@ export default async function Page() {
               metric="5+"
               metricLabel="free public sources"
               title="Filter"
-              body="FEMA flood zones · ACS income tract · code violations · tax delinquency · NOAA storm history. Bad-fit parcels pre-removed. Bundled into the per-piece price."
+              body="Flood risk · income tract · code violations · tax delinquency · storm history. Bad-fit parcels pre-removed. Bundled into the per-piece price."
             />
             <NumStep
               n="03"
               metric="Set"
               metricLabel="the rules · we watch"
               title="Trigger"
-              body="Freeze · permit pulled · just-sold · NEM 3.0 · post-PTO. Pick the events that matter. We monitor and fire the batch into your dashboard for review."
+              body="Freeze · permit pulled · just-sold · regulatory deadlines · post-install milestones. Pick the events that matter. We monitor and fire the batch into your dashboard for review."
             />
             <NumStep
               n="04"
@@ -389,7 +389,7 @@ export default async function Page() {
                 label="Refresh cadence"
                 a="Static dump"
                 b="Static dump"
-                c="Event-triggered (freeze · permit · NEM · just-sold)"
+                c="Event-triggered (freeze · permit · regulatory · just-sold)"
                 cAccent
               />
               <ThreeAxisRow
@@ -470,8 +470,8 @@ export default async function Page() {
               <p className="legend mb-8">per postcard delivered · all-in</p>
               <ul className="space-y-3 border-t rule pt-6 text-sm leading-relaxed">
                 <IncludedRow>Verified pool / panel address generation (visual ML on parcel-level satellite)</IncludedRow>
-                <IncludedRow>Government-data quality filtering (FEMA · ACS · code violations · tax delinquency · storm history)</IncludedRow>
-                <IncludedRow>Trigger monitoring (freeze · permit · just-sold · NEM 3.0 · post-PTO)</IncludedRow>
+                <IncludedRow>Government-data quality filtering (flood risk · income tract · code violations · tax delinquency · storm history)</IncludedRow>
+                <IncludedRow>Trigger monitoring (freeze · permit · just-sold · regulatory · post-install)</IncludedRow>
                 <IncludedRow>Postcard design (templated; per-batch approval)</IncludedRow>
                 <IncludedRow>Print + USPS Marketing Mail postage</IncludedRow>
                 <IncludedRow>Response capture: tracking number · QR code · reply mailer</IncludedRow>
@@ -486,9 +486,9 @@ export default async function Page() {
               <p className="font-display text-5xl leading-none mb-2">$1</p>
               <p className="legend mb-8">per matched address · per event</p>
               <p className="text-sm leading-relaxed text-[var(--color-muted)] mb-6">
-                Storm-event alerts on addresses you've already mailed. NOAA
-                hail / wind / freeze / wildfire crosses your list, we ping
-                you within 24 hours. Monthly cap TBD.
+                Storm-event alerts on addresses you've already mailed. Hail
+                / wind / freeze / wildfire crosses your list, we ping you
+                within 24 hours. Monthly cap TBD.
               </p>
               <p className="legend text-[var(--color-muted)]">
                 Opt-in after first pilot.
@@ -665,27 +665,27 @@ function LeadRowMockup() {
     photo: string;
   }> = [
     {
-      parcel: "14-32-118-009",
-      address: "5821 W Cactus Rd, Glendale AZ 85304",
-      latlon: "33.5722, -112.1391",
+      parcel: "14-32-118-•••",
+      address: "•••• W Cactus Rd, Glendale AZ 85304",
+      latlon: "33.57, -112.14",
       conf: "0.92",
-      enrich: "FEMA X · ACS $$$ · No code violations",
+      enrich: "Flood-zone X · income tier $$$ · no code violations",
       photo: "tile.png",
     },
     {
-      parcel: "21-08-204-117",
-      address: "9244 Lakeshore Blvd, Tampa FL 33619",
-      latlon: "27.9506, -82.4572",
+      parcel: "21-08-204-•••",
+      address: "•••• Lakeshore Blvd, Tampa FL 33619",
+      latlon: "27.95, -82.46",
       conf: "0.88",
-      enrich: "FEMA AE · ACS $$ · Hurricane Helene crossing",
+      enrich: "Flood-zone AE · income tier $$ · hurricane crossing",
       photo: "tile.png",
     },
     {
-      parcel: "07-15-330-042",
-      address: "412 Sunset Ave, Sacramento CA 95819",
-      latlon: "38.5816, -121.4944",
+      parcel: "07-15-330-•••",
+      address: "••• Sunset Ave, Sacramento CA 95819",
+      latlon: "38.58, -121.49",
       conf: "0.95",
-      enrich: "Solar · NEM 2018 · age 7 yr · LBNL match",
+      enrich: "Solar · age 7 yr · interconnection 2018",
       photo: "tile.png",
     },
   ];

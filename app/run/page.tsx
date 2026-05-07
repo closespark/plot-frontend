@@ -87,7 +87,7 @@ export default async function RunPage() {
                 <span className="font-mono text-[var(--color-ink)]">Plot</span> as the source.
               </Bullet>
               <Bullet label="Government enrichment quality filter">
-                FEMA flood zones, ACS income tier, code violations, tax delinquency —
+                Flood risk, income tier, code violations, tax delinquency —
                 pre-removed from the mail list. Free, baked into $1.50.
               </Bullet>
             </ul>
