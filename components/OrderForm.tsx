@@ -11,12 +11,20 @@ type ConnectedCrm = { id: string; name: string };
 // Postcard volume tiers — flat $1.50/piece, no tier discounts.
 // Per `feedback_smb_simple_pricing`: SMB self-serve = flat per-unit, no tiers.
 // These are *volume* selections (how many postcards/month), not price tiers.
+//
+// Tier ladder spans the 1-10-truck pool ICP. A 1-truck shop with ~200
+// accounts mailing just-sold neighbor batches lands at 50-200/mo. A multi-
+// truck shop running freeze + just-sold + permit triggers across a metro
+// county lands at 500-2,500/mo. 5,000/mo is the largest single-county
+// addressable footprint we sell at this stage. Bigger volumes are
+// multi-county routes — those go through `hello@get-plot.com`.
 const VOLUME_TIERS = [
+  { value: 50, label: "50", monthly: "$75" },
+  { value: 200, label: "200", monthly: "$300" },
+  { value: 500, label: "500", monthly: "$750" },
   { value: 1000, label: "1,000", monthly: "$1,500" },
   { value: 2500, label: "2,500", monthly: "$3,750" },
   { value: 5000, label: "5,000", monthly: "$7,500" },
-  { value: 10000, label: "10,000", monthly: "$15,000" },
-  { value: 25000, label: "25,000", monthly: "$37,500" },
 ];
 
 export function OrderForm({
@@ -30,7 +38,7 @@ export function OrderForm({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [pushToCrm, setPushToCrm] = useState(false);
-  const [volume, setVolume] = useState<number>(2500);
+  const [volume, setVolume] = useState<number>(200);
 
   async function action(form: FormData) {
     setError(null);
@@ -114,7 +122,7 @@ export function OrderForm({
 
       <div className="border rule bg-[var(--color-paper)] px-6 pt-4 pb-5">
         <p className="legend mb-4">Postcards per month — $1.50/piece, all-in</p>
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-px bg-[var(--color-hairline)] border rule">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-[var(--color-hairline)] border rule">
           {VOLUME_TIERS.map((t) => {
             const selected = volume === t.value;
             return (

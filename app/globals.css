@@ -106,6 +106,39 @@
 }
 .btn-ghost:hover { border-color: var(--color-ink); }
 
+/* Dark-band variants — used inside ink/dark sections (final CTA band etc.) */
+.btn-ink-on-ink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--color-signal);
+  color: var(--color-ink);
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--color-signal);
+  transition: filter 120ms ease;
+}
+.btn-ink-on-ink:hover { filter: brightness(1.1); }
+
+.btn-ghost-on-ink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--color-paper);
+  background: transparent;
+  transition: background 120ms ease;
+}
+.btn-ghost-on-ink:hover { background: rgba(255,255,255,0.06); }
+
 /* Map-pin marker — used in the hero overlay */
 .pin {
   display: inline-flex;
