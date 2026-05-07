@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProofTile } from "@/components/ProofTile";
 import { MarketsTable } from "@/components/MarketsTable";
+import { MarketCard, type MarketCardData } from "@/components/MarketCard";
 import { naipTileUrl } from "@/lib/naip";
 import { listCounties } from "@/lib/api";
 
@@ -9,19 +10,6 @@ import { listCounties } from "@/lib/api";
 // only on backend deploys, but stale data here would mis-sell coverage.
 export const dynamic = "force-dynamic";
 
-// Pin coordinates derived from blue-pixel cluster centroids in the source
-// Scottsdale tile (scottsdale-pool-sample__33.60530_-111.92140_160_640.jpg).
-// See /tmp/find_pools.py for the detector. Truth on the marker count is
-// load-bearing — the brand commits to "photo on every row, refunded if wrong,"
-// so any pin that doesn't sit over a real pool undercuts the product claim.
-const HERO_PINS = [
-  { x: 67, y: 3,  n: 1 }, // top blue pool
-  { x: 22, y: 36, n: 2 }, // mid-left blue pool by orange-roofed house
-  { x: 91, y: 30, n: 3 }, // upper-right kidney pool
-  { x: 8,  y: 98, n: 4 }, // lower-left small pool
-  { x: 72, y: 89, n: 5 }, // lower-right rectangular pool
-];
-
 const SAMPLE_BOXES = [
   { x: 38, y: 46, w: 14, h: 18 }, // a single backyard pool detection
 ];
@@ -29,7 +17,7 @@ const SAMPLE_BOXES = [
 export default async function Page() {
   // Fetch live markets server-side. If the backend is unreachable, render an
   // empty list rather than 500 the page — user can still order via /run.
-  let markets: { key: string; state: string; county: string }[] = [];
+  let markets: MarketCardData[] = [];
   try {
     const r = await listCounties();
     markets = r.counties
@@ -37,50 +25,104 @@ export default async function Page() {
       // Backend filter is by `pool_x_parcel` block presence; archived rows
       // sometimes still carry that block during deprecation.
       .filter((c) => !/_archived$|_legacy$|^_/.test(c.key))
-      .map((c) => ({ key: c.key, state: c.state, county: c.county }));
+      .map((c) => ({
+        key: c.key, state: c.state, county: c.county,
+        parcels: c.row_count ?? 0,
+      }));
   } catch {
     markets = [];
   }
 
+  // Aggregate stats — the hero's main job. Numbers come from the live
+  // /v1/counties response so they reflect today's coverage, not a frozen
+  // snapshot. Counties with row_count=0 still count as "live" — they're
+  // sellable, the parcel count just hasn't re-probed yet.
+  const totalParcels = markets.reduce((sum, m) => sum + m.parcels, 0);
+  const liveCounties = markets.length;
+  const statesCovered = new Set(markets.map((m) => m.state)).size;
+
+  // Top-N for the explorer grid: parcel-count desc, "scoping" rows last.
+  // Cap at 12 cards so the section reads as a curated above-the-fold view
+  // — full sortable table sits below for power users.
+  const featured = [...markets]
+    .sort((a, b) => (b.parcels || 0) - (a.parcels || 0))
+    .slice(0, 12);
+
   return (
     <>
-      {/* HERO ----------------------------------------------------- */}
+      {/* HERO — stats-heavy, AirDNA-shape ----------------------- */}
       <section className="border-b rule">
-        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 pt-16 pb-24 grid lg:grid-cols-12 gap-12">
-          <div className="lg:col-span-7">
-            <p className="legend mb-8">
-              Verified property data <span className="text-[var(--color-signal)]">·</span> Self-serve
-            </p>
-            <h1 className="mb-8">
-              Pool leads.<br />
-              <span className="italic text-[var(--color-signal)]">A photo</span> on every row.
-            </h1>
-            <p className="text-xl leading-relaxed max-w-2xl mb-10">
-              <span className="em-dash" />Brokers sell stale assessor records at $0.10. We sell records
-              with a current satellite image proving the pool is actually there.
-              Refunded if the photo doesn't match. Brokers can't make that promise.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/run" className="btn-ink">Run a pilot →</Link>
-              <Link href="#pricing" className="btn-ghost">See pricing ↓</Link>
-            </div>
-            <dl className="grid grid-cols-3 gap-8 mt-16 pt-10 border-t rule">
-              <Stat label="Per verified lead" value="$0.15" />
-              <Stat label="Precision vs assessor" value="96.5%" />
-              <Stat label="Proof on every row" value="Photo" mono />
-            </dl>
-          </div>
-          <div className="lg:col-span-5">
-            <ProofTile
-              src={naipTileUrl({ lat: 33.6053, lon: -111.9214, label: "scottsdale-pool-sample" })}
-              alt="Scottsdale residential block with verified backyard pools"
-              pins={HERO_PINS}
-              className="aspect-square"
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 pt-16 pb-20">
+          <p className="legend mb-8">
+            Verified property data <span className="text-[var(--color-signal)]">·</span>{" "}
+            Updated on every order
+          </p>
+          <h1 className="mb-10 max-w-5xl">
+            Every backyard pool in your county.<br />
+            <span className="italic text-[var(--color-signal)]">Indexed</span>, photographed, $0.15.
+          </h1>
+
+          {/* Headline number row — the AirDNA "$54,300 avg revenue" move.
+              Live aggregates first, brand commitments second. */}
+          <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--color-hairline)] border rule">
+            <BigStat
+              value={totalParcels > 0 ? compact(totalParcels) : "—"}
+              label="parcels indexed"
+              tone="signal"
             />
-            <p className="legend mt-3">
-              SCOTTSDALE · SAMPLE NEIGHBORHOOD SCAN · 5 verified pools
-            </p>
+            <BigStat
+              value={liveCounties.toString()}
+              label={`counties live · ${statesCovered} states`}
+            />
+            <BigStat
+              value="96.5%"
+              label="precision vs assessor"
+            />
+            <BigStat
+              value="$0.15"
+              label="per verified lead · refunded if wrong"
+            />
+          </dl>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-10">
+            <Link href="/run" className="btn-ink">Run a pilot →</Link>
+            <Link href="#explorer" className="btn-ghost">Browse markets ↓</Link>
+            <Link href="/examples" className="btn-ghost">See a sample scan ↓</Link>
           </div>
+        </div>
+      </section>
+
+      {/* MARKET EXPLORER ---------------------------------------- */}
+      <section id="explorer" className="border-b rule bg-[var(--color-paper)]/40">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-20">
+          <div className="grid lg:grid-cols-12 gap-12 mb-12">
+            <div className="lg:col-span-7">
+              <p className="legend mb-6">/ Market explorer</p>
+              <h2 className="mb-4">
+                Top markets,<br />
+                <span className="italic text-[var(--color-signal)]">ranked by scale</span>.
+              </h2>
+              <p className="text-lg leading-relaxed max-w-2xl text-[var(--color-muted)]">
+                <span className="em-dash" />Each card is a county we scan on demand. Click to order;
+                we deliver the verified pool list within 24 hours. The full
+                sortable index sits below.
+              </p>
+            </div>
+          </div>
+
+          {featured.length > 0 ? (
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-[var(--color-hairline)] border rule">
+              {featured.map((m) => (
+                <MarketCard key={m.key} market={m} />
+              ))}
+            </div>
+          ) : (
+            <p className="border rule p-8 font-mono text-sm text-[var(--color-muted)]">
+              Markets list temporarily unavailable. Visit{" "}
+              <Link href="/run" className="text-[var(--color-ink)] underline underline-offset-4">/run</Link>{" "}
+              to see all live counties.
+            </p>
+          )}
         </div>
       </section>
 
@@ -181,12 +223,13 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* MARKETS ------------------------------------------------- */}
+      {/* MARKETS — full sortable index --------------------------- */}
       <section id="sample" className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
-          <p className="legend mb-6">/ Live markets</p>
+          <p className="legend mb-6">/ Full index</p>
           <h2 className="mb-12 max-w-3xl">
-            Counties that <em>cover</em> the operators we serve.
+            All <span className="italic text-[var(--color-signal)]">{liveCounties}</span> live
+            counties. Searchable.
           </h2>
           {markets.length > 0 ? (
             <MarketsTable markets={markets} />
@@ -298,15 +341,35 @@ export default async function Page() {
   );
 }
 
-function Stat({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+/** AirDNA-style headline number — the dominant text on the page. Used in
+ * the hero stat strip. `tone="signal"` reserves the orange accent for the
+ * single most "wow" stat in the row (typically the parcel count). */
+function BigStat({
+  value, label, tone,
+}: {
+  value: string;
+  label: string;
+  tone?: "signal";
+}) {
   return (
-    <div>
-      <dt className="legend mb-2">{label}</dt>
-      <dd className={mono ? "font-mono text-2xl tracking-tight" : "font-display text-5xl leading-none"}>
+    <div className="bg-[var(--color-paper)] p-6 lg:p-8">
+      <dd className={`font-display text-5xl lg:text-6xl leading-none ${
+        tone === "signal" ? "text-[var(--color-signal)]" : ""
+      }`}>
         {value}
       </dd>
+      <dt className="legend mt-3">{label}</dt>
     </div>
   );
+}
+
+/** Compact number formatter — 2_041_141 → "2.04M", 142_000 → "142K". Used
+ * in the hero so big numbers stay readable at display sizes. Below 10K we
+ * keep full digits because "9,500 parcels" is more meaningful than "9.5K". */
+function compact(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2).replace(/\.?0+$/, "")}M`;
+  if (n >= 10_000) return `${Math.round(n / 1000)}K`;
+  return n.toLocaleString();
 }
 
 function Step({ n, title, body }: { n: string; title: string; body: string }) {

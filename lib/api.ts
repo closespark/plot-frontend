@@ -31,6 +31,10 @@ export type County = {
   state: string;
   county: string;
   fips: string;
+  // Total parcels per the assessor. 0 means "scoping" — county is sellable
+  // but the rosetta worker hasn't re-probed since the field shipped. UI
+  // should branch on === 0 to show a "Coming online" badge instead of "0".
+  row_count?: number;
 };
 
 /** Thrown by `call()` on non-2xx upstream responses. Proxy route handlers
