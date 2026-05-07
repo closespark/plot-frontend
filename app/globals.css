@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/*
+ * Plot — editorial-cartographic aesthetic.
+ *
+ *   Display:  Instrument Serif (Google Fonts) — large, characterful headlines
+ *   Body:     IBM Plex Sans                   — technical, trustworthy
+ *   Mono:     IBM Plex Mono                   — labels in small caps, map-legend feel
+ *
+ *   Bg:       #fafaf9 (warm off-white, paper)
+ *   Fg:       #0a0a0a
+ *   Accent:   #ff5500 (signal orange, cartographic)
+ *   Muted:    #6b6b66
+ *   Hairline: #d6d6d2
+ */
+
+@theme {
+  --font-display: "Instrument Serif", ui-serif, Georgia, Cambria, serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Menlo", monospace;
+
+  --color-paper: #fafaf9;
+  --color-ink: #0a0a0a;
+  --color-signal: #ff5500;
+  --color-muted: #6b6b66;
+  --color-hairline: #d6d6d2;
+  --color-deep: #1a1a17;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "ss02";
+    -webkit-font-smoothing: antialiased;
+  }
+  body { background: var(--color-paper); }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+  h1 { font-size: clamp(3.5rem, 9vw, 8rem); }
+  h2 { font-size: clamp(2.25rem, 5vw, 4rem); }
+  h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+
+  /* Cartography-style label */
+  .legend {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .legend-on-ink {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-paper);
+  }
+
+  /* Hard hairline — used for grid divisions */
+  .rule {
+    border-color: var(--color-hairline);
+  }
+
+  /* Display-quoting "—" inside paragraphs */
+  .em-dash::before { content: "— "; color: var(--color-signal); }
+}
+
+/* Buttons — flat, no rounded-anything */
+.btn-ink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--color-ink);
+  transition: background 120ms ease;
+}
+.btn-ink:hover { background: var(--color-signal); border-color: var(--color-signal); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--color-hairline);
+  background: transparent;
+  transition: border-color 120ms ease;
+}
+.btn-ghost:hover { border-color: var(--color-ink); }
+
+/* Map-pin marker — used in the hero overlay */
+.pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem; height: 1.5rem;
+  background: var(--color-signal);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  border: 2px solid var(--color-paper);
+}
