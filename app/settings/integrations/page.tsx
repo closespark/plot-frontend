@@ -9,6 +9,7 @@ export default async function IntegrationsPage() {
 
   const crm = INTEGRATIONS.filter((v) => v.kind === "crm");
   const postcard = INTEGRATIONS.filter((v) => v.kind === "postcard");
+  const canvassing = INTEGRATIONS.filter((v) => v.kind === "canvassing");
 
   return (
     <section>
@@ -53,6 +54,24 @@ export default async function IntegrationsPage() {
             </p>
             <ul className="space-y-px">
               {postcard.map((v) => (
+                <IntegrationRow
+                  key={v.id}
+                  vendor={v}
+                  connected={connectedIds.has(v.id)}
+                />
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="legend mb-6">/ Door-to-door rail</p>
+            <p className="text-base leading-relaxed mb-8 max-w-2xl text-[var(--color-muted)]">
+              For SMBs running door-knocking territory motion. Plot pushes
+              verified addresses into the rep app; dispositions flow back so
+              "knocked: interested" leads land in your CRM as qualified.
+            </p>
+            <ul className="space-y-px">
+              {canvassing.map((v) => (
                 <IntegrationRow
                   key={v.id}
                   vendor={v}

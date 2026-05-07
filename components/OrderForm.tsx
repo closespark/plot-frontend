@@ -8,6 +8,17 @@ type County = { key: string; state: string; county: string };
 
 type ConnectedCrm = { id: string; name: string };
 
+// Postcard volume tiers — flat $1.50/piece, no tier discounts.
+// Per `feedback_smb_simple_pricing`: SMB self-serve = flat per-unit, no tiers.
+// These are *volume* selections (how many postcards/month), not price tiers.
+const VOLUME_TIERS = [
+  { value: 1000, label: "1,000", monthly: "$1,500" },
+  { value: 2500, label: "2,500", monthly: "$3,750" },
+  { value: 5000, label: "5,000", monthly: "$7,500" },
+  { value: 10000, label: "10,000", monthly: "$15,000" },
+  { value: 25000, label: "25,000", monthly: "$37,500" },
+];
+
 export function OrderForm({
   counties,
   connectedCrms = [],
@@ -19,12 +30,13 @@ export function OrderForm({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [pushToCrm, setPushToCrm] = useState(false);
+  const [volume, setVolume] = useState<number>(2500);
 
   async function action(form: FormData) {
     setError(null);
     const email = form.get("email") as string;
     const county = form.get("county") as string;
-    const min_score = Number(form.get("min_score") || 0.30);
+    const postcard_volume_monthly = Number(form.get("postcard_volume_monthly") || volume);
     // crm_destination only sent if user opted in; backend ignores unknown
     // fields so this is forward-compatible with the API endpoint that
     // doesn't yet accept it.
@@ -32,13 +44,20 @@ export function OrderForm({
       ? (form.get("crm_destination") as string) || null
       : null;
 
+    // Backend `CreateOrderRequest` (api/main.py) does not (yet) accept
+    // postcard_volume_monthly or recurring-subscription fields. Pydantic v2
+    // defaults to ignoring unknown fields, so we send it anyway — the backend
+    // dev wiring up the per-volume Stripe price will already see it in the
+    // payload. min_score is pinned at the production default (0.30); the
+    // confidence-threshold knob has been removed from the customer surface.
     const r = await fetch("/api/orders", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         customer_email: email,
         county,
-        min_score,
+        min_score: 0.30,
+        postcard_volume_monthly,
         ...(crm_destination ? { crm_destination } : {}),
       }),
     });
@@ -93,17 +112,51 @@ export function OrderForm({
         </select>
       </Field>
 
-      <Field label="Minimum confidence — leave at default unless you know what this does">
-        <select
-          name="min_score"
-          defaultValue="0.30"
-          className="w-full bg-[var(--color-paper)] border-0 outline-none px-6 py-5 font-display text-2xl appearance-none cursor-pointer"
-        >
-          <option value="0.30">0.30 — broadest, includes harder cases (recommended)</option>
-          <option value="0.50">0.50 — high confidence only</option>
-          <option value="0.70">0.70 — only the obvious ones</option>
-        </select>
-      </Field>
+      <div className="border rule bg-[var(--color-paper)] px-6 pt-4 pb-5">
+        <p className="legend mb-4">Postcards per month — $1.50/piece, all-in</p>
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-px bg-[var(--color-hairline)] border rule">
+          {VOLUME_TIERS.map((t) => {
+            const selected = volume === t.value;
+            return (
+              <label
+                key={t.value}
+                className={`cursor-pointer px-4 py-4 flex flex-col items-start justify-between gap-2 transition-colors ${
+                  selected
+                    ? "bg-[var(--color-ink)] text-[var(--color-paper)]"
+                    : "bg-[var(--color-paper)] hover:bg-[var(--color-paper)]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="postcard_volume_monthly"
+                  value={t.value}
+                  checked={selected}
+                  onChange={() => setVolume(t.value)}
+                  className="sr-only"
+                />
+                <span
+                  className={`font-display text-3xl leading-none ${
+                    selected ? "text-[var(--color-paper)]" : "text-[var(--color-ink)]"
+                  }`}
+                >
+                  {t.label}
+                </span>
+                <span
+                  className={`font-mono text-xs tracking-wider uppercase ${
+                    selected ? "text-[var(--color-signal)]" : "text-[var(--color-muted)]"
+                  }`}
+                >
+                  {t.monthly}/mo
+                </span>
+              </label>
+            );
+          })}
+        </div>
+        <p className="text-sm text-[var(--color-muted)] mt-3">
+          Recurring monthly. Cancel any time. Refund any postcard whose lead-row photo
+          doesn't show a pool — flagged within 30 days, $1.50/row, no cap.
+        </p>
+      </div>
 
       <div className="border rule bg-[var(--color-paper)] px-6 py-5">
         <label className="flex items-start gap-3 cursor-pointer">
@@ -114,9 +167,9 @@ export function OrderForm({
             className="mt-1.5 accent-[var(--color-signal)]"
           />
           <span>
-            <span className="legend block mb-1">Push leads straight to my CRM</span>
+            <span className="legend block mb-1">Push responses straight to my CRM</span>
             <span className="text-base text-[var(--color-muted)]">
-              Skip the CSV step. New leads land in your CRM tagged{" "}
+              Tracked-number and QR-code responses land in your CRM tagged{" "}
               <span className="font-mono text-[var(--color-ink)]">Plot</span> as the source.
             </span>
           </span>
@@ -160,10 +213,10 @@ export function OrderForm({
           disabled={pending}
           className="btn-ink disabled:opacity-50"
         >
-          {pending ? "Starting…" : "Start scan — $15 minimum →"}
+          {pending ? "Starting…" : `Start mailing — ${VOLUME_TIERS.find((t) => t.value === volume)?.monthly}/mo →`}
         </button>
         <p className="legend pt-4">
-          You'll be redirected to Stripe Checkout. Refund anything that's wrong, no questions asked.
+          You'll be redirected to Stripe Checkout. Cancel any time. Refund any wrong row.
         </p>
       </div>
     </form>

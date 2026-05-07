@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ProofTile } from "@/components/ProofTile";
 import { MarketsTable } from "@/components/MarketsTable";
 import { MarketCard, type MarketCardData } from "@/components/MarketCard";
+import { ROICalculator } from "@/components/ROICalculator";
 import { naipTileUrl } from "@/lib/naip";
 import { listCounties } from "@/lib/api";
 
@@ -50,23 +51,23 @@ export default async function Page() {
 
   return (
     <>
-      {/* HERO — platform-wide, layered narrative ---------------- */}
+      {/* HERO — done-for-you postcard delivery, $1.50 unit ------- */}
       <section className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 pt-16 pb-20">
           <p className="legend mb-8">
-            Verified property data + event triggers
+            Verified pool homeowners · pre-filtered · mailed for you
             <span className="text-[var(--color-signal)]"> · </span>
-            Self-serve
+            Sales-led pilots
           </p>
           <h1 className="mb-10 max-w-5xl">
-            Every pool, photographed.<br />
-            Every storm,{" "}
-            <span className="italic text-[var(--color-signal)]">mapped</span>.
+            Direct mail to pools{" "}
+            <span className="italic text-[var(--color-signal)]">that actually exist</span>.<br />
+            $1.50 a postcard. Refunded if the photo lies.
           </h1>
 
-          {/* Headline number row — live aggregates first, brand commitments
-              second. Stat strip mirrors the layered product: L1 base list
-              numbers + L2 (storm overlay) preview line below. */}
+          {/* Headline number row — three live aggregates anchor the
+              coverage claim; the fourth slot lands the new $1.50 unit
+              economic so it reads as "this is the price" not buried. */}
           <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--color-hairline)] border rule">
             <BigStat
               value={totalParcels > 0 ? compact(totalParcels) : "—"}
@@ -82,20 +83,10 @@ export default async function Page() {
               label="precision vs assessor"
             />
             <BigStat
-              value="$0.15"
-              label="per verified lead · refunded if wrong"
+              value="$1.50"
+              label="per postcard delivered · all-in"
             />
           </dl>
-
-          {/* Roadmap line — sits under the stat strip so the L2 commitment
-              reads as honest forecast, not buried roadmap. */}
-          <p className="legend mt-6 max-w-3xl">
-            <span className="text-[var(--color-signal)]">●</span> Pool storm
-            overlay (hurricane / hail / freeze / wildfire) shipping this
-            month <span className="text-[var(--color-muted)]">·</span>{" "}
-            <span className="text-[var(--color-muted)]">○</span> Solar base
-            list shipping Q3
-          </p>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-10">
             <Link href="/run" className="btn-ink">Run a pilot →</Link>
@@ -105,42 +96,56 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* VERTICAL ROW — pool live, solar Q3 ---------------------- */}
+      {/* VERTICAL ROW — pool live, solar muted to a quiet roadmap nod */}
       <section className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-16">
-          <p className="legend mb-6">/ Two verticals · one platform</p>
+          <p className="legend mb-6">/ Launch vertical</p>
           <h2 className="mb-12 max-w-3xl">
-            Pick the assets you sell to.<br />
-            <span className="italic text-[var(--color-signal)]">Same data spine.</span>
+            Pool service, end-to-end.<br />
+            <span className="italic text-[var(--color-signal)]">Detection through delivery.</span>
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
-            <VerticalCard
-              status="live"
-              tag="● Pool"
-              title="Verified pool detection"
-              icp="Pool service · cleaning · repair · screen-enclosure restoration"
-              specs={[
-                { label: "Base list (L1)", value: "$0.15/lead" },
-                { label: "Coverage", value: `${liveCounties} counties · ${compact(totalParcels)} parcels` },
-                { label: "Storm overlay (L2)", value: "Hurricane / freeze / hail" },
-                { label: "L2 ships", value: "This month" },
-              ]}
-              cta={{ label: "Run a pool pilot →", href: "/run" }}
-            />
-            <VerticalCard
-              status="coming"
-              tag="○ Solar"
-              title="Verified solar-array detection"
-              icp="Panel cleaning · maintenance · post-storm repair · battery retrofit"
-              specs={[
-                { label: "Base list (L1)", value: "$0.15/lead · Q3" },
-                { label: "Coverage", value: "National (planned)" },
-                { label: "Storm overlay (L2)", value: "Hail / wind / wildfire" },
-                { label: "L2 ships", value: "After L1" },
-              ]}
-              cta={{ label: "Get early access →", href: "mailto:hello@get-plot.com?subject=Plot%20solar%20early%20access" }}
-            />
+          <div className="grid md:grid-cols-3 gap-px bg-[var(--color-hairline)] border rule">
+            <div className="md:col-span-2 bg-[var(--color-paper)] p-8 lg:p-10">
+              <div className="flex items-baseline justify-between mb-6">
+                <p className="legend text-[var(--color-signal)]">● Pool</p>
+                <p className="legend">Live</p>
+              </div>
+              <h3 className="mb-3">Verified pool homeowners, mailed for you</h3>
+              <p className="text-sm leading-relaxed text-[var(--color-muted)] mb-8">
+                Pool service · cleaning · repair · screen-enclosure restoration
+              </p>
+              <dl className="space-y-3 border-t rule pt-6">
+                <SpecRow label="Audience" value="Verified pool addresses · enriched + filtered before mail" />
+                <SpecRow label="Coverage" value={`${liveCounties} counties · ${compact(totalParcels)} parcels`} />
+                <SpecRow label="Channel" value="Postcards · designed, printed, mailed (Stannp)" />
+                <SpecRow label="Response capture" value="Tracking number · QR code · reply mailer" />
+                <SpecRow label="Hand-off" value="Jobber · Housecall Pro · HubSpot" />
+                <SpecRow label="Refund" value="Per-piece, if the lead-row photo doesn't show a pool" />
+              </dl>
+              <Link href="/run" className="mt-8 inline-block btn-ink">
+                Run a pool pilot →
+              </Link>
+            </div>
+            <div className="bg-[var(--color-paper)]/60 p-8 lg:p-10">
+              <div className="flex items-baseline justify-between mb-6">
+                <p className="legend text-[var(--color-muted)]">○ Next vertical</p>
+                <p className="legend">Roadmap</p>
+              </div>
+              <h3 className="mb-3 text-[var(--color-muted)]">Solar maintenance</h3>
+              <p className="text-sm leading-relaxed text-[var(--color-muted)] mb-8">
+                Cleaning, panel inspection, post-storm repair, battery retrofit.
+                Same engine, second vertical — no homepage promise yet.
+              </p>
+              <p className="legend text-[var(--color-muted)]">
+                <a
+                  href="mailto:hello@get-plot.com?subject=Plot%20solar%20early%20access"
+                  className="text-[var(--color-ink)] underline underline-offset-4"
+                >
+                  Get notified →
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -152,13 +157,14 @@ export default async function Page() {
             <div className="lg:col-span-7">
               <p className="legend mb-6">/ Market explorer</p>
               <h2 className="mb-4">
-                Top markets,<br />
+                Counties we mail into,<br />
                 <span className="italic text-[var(--color-signal)]">ranked by scale</span>.
               </h2>
               <p className="text-lg leading-relaxed max-w-2xl text-[var(--color-muted)]">
-                <span className="em-dash" />Each card is a county we scan on demand. Click to order;
-                we deliver the verified pool list within 24 hours. The full
-                sortable index sits below.
+                <span className="em-dash" />Each card is a county we scan and mail into. Pilots run on
+                request — verified pool list, designed creative, postcards in
+                the mail, responses routed to your CRM. Full sortable index
+                sits below.
               </p>
             </div>
           </div>
@@ -191,15 +197,17 @@ export default async function Page() {
             <p className="text-lg leading-relaxed text-[var(--color-muted)] mb-8">
               <span className="em-dash" />Glendale, AZ — one residential block. The orange box is
               the v32 model's detection; the pin is the verified pool tied
-              to a parcel record. Multiply this across a county and you
-              have the database.
+              to a parcel record. Multiply this across a county, layer
+              government enrichment on top, and you have the mail list.
             </p>
 
-            {/* Stat callouts — inline product attestation */}
+            {/* Stat callouts — inline product attestation. Now leans on
+                enrichment context (FEMA / ACS) so the proof tile reads as
+                "every row is filtered, not just detected." */}
             <dl className="grid grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
               <SmallStat value="0.92" label="confidence on this pool" />
-              <SmallStat value="96.5%" label="precision vs assessor" />
-              <SmallStat value="v32" label="model version · current prod" />
+              <SmallStat value="FEMA X" label="flood zone (excluded by default)" />
+              <SmallStat value="ACS" label="tract income tier · $$$" />
               <SmallStat value="May 2026" label="imagery date" />
             </dl>
 
@@ -224,34 +232,74 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* STORM OVERLAY — L2 product explanation ------------------ */}
+      {/* LEAD-ROW PROOF ----------------------------------------- */}
+      {/* Reinforces "photo on every row" without requiring a new image
+          asset. One stylized lead row showing the surface area the SMB
+          actually reviews. */}
+      <section className="border-b rule bg-[var(--color-paper)]/40">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-20">
+          <p className="legend mb-6">/ Every dashboard row looks like this</p>
+          <h2 className="mb-10 max-w-3xl">
+            One row, one pool,<br />
+            <span className="italic text-[var(--color-signal)]">one refundable promise</span>.
+          </h2>
+          <div className="border rule bg-[var(--color-paper)]">
+            <div className="grid grid-cols-[120px_minmax(220px,2fr)_minmax(140px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)] border-b rule">
+              <div className="px-4 py-3 legend">Parcel ID</div>
+              <div className="px-4 py-3 legend">Address</div>
+              <div className="px-4 py-3 legend">Lat / Lon</div>
+              <div className="px-4 py-3 legend">Confidence</div>
+              <div className="px-4 py-3 legend">Enrichment</div>
+              <div className="px-4 py-3 legend">Photo</div>
+            </div>
+            <div className="grid grid-cols-[120px_minmax(220px,2fr)_minmax(140px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)_minmax(120px,1fr)]">
+              <div className="px-4 py-5 font-mono text-xs">14-32-118-009</div>
+              <div className="px-4 py-5 text-sm">5821 W Cactus Rd, Glendale AZ 85304</div>
+              <div className="px-4 py-5 font-mono text-xs">33.5722, -112.1391</div>
+              <div className="px-4 py-5 font-display text-xl text-[var(--color-signal)]">0.92</div>
+              <div className="px-4 py-5 text-xs leading-relaxed text-[var(--color-muted)]">
+                FEMA X · ACS $$$ · No code violations
+              </div>
+              <div className="px-4 py-5">
+                <span className="legend text-[var(--color-signal)]">● tile.png</span>
+              </div>
+            </div>
+          </div>
+          <p className="legend mt-6 text-[var(--color-muted)] max-w-3xl">
+            Every row carries the satellite tile. If the photo doesn't show a
+            pool, the postcard mailed against that row gets refunded — one
+            email, no escalation.
+          </p>
+        </div>
+      </section>
+
+      {/* STORM OVERLAY — quieter add-on framing ----------------- */}
       <section id="storm-overlay" className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
           <div className="grid lg:grid-cols-12 gap-12 mb-12">
             <div className="lg:col-span-7">
-              <p className="legend mb-6">/ Storm overlay · L2</p>
+              <p className="legend mb-6">/ Optional add-on · storm-event alerts</p>
               <h2 className="mb-6">
-                The day the storm hits,<br />
-                <span className="italic text-[var(--color-signal)]">we already know whose</span>.
+                When the storm crosses your list,<br />
+                <span className="italic text-[var(--color-signal)]">we tell you first</span>.
               </h2>
               <p className="text-lg leading-relaxed text-[var(--color-muted)] max-w-2xl">
-                <span className="em-dash" />Layer one tells you which homes have pools and panels.
-                Layer two watches NOAA hail / wind / wildfire / freeze data
-                and notifies you within 24 hours when a qualifying event
-                passes over assets you've already bought. Show up first.
-                Win the work.
+                <span className="em-dash" />Subscription add-on for customers who already mail with
+                us. We watch NOAA hail / wind / wildfire / freeze data and
+                notify you within 24 hours when a qualifying event passes
+                over an address you've already mailed. $1 per matched
+                address per event · monthly cap TBD.
               </p>
             </div>
             <div className="lg:col-span-5 lg:flex lg:items-end lg:justify-end">
-              <span className="legend text-[var(--color-signal)]">
-                ● Pool storm overlay shipping this month
+              <span className="legend text-[var(--color-muted)]">
+                ○ Subscription add-on · not the headline
               </span>
             </div>
           </div>
 
-          {/* Event × damage × geography table — content lifted from the
-              product strategy doc; same table both verticals will share
-              once solar L1 ships. */}
+          {/* Event × damage × geography table — still a useful reference
+              for which storms drive demand in which markets. */}
           <div className="border rule bg-[var(--color-paper)]">
             <div className="grid grid-cols-[140px_1fr_minmax(160px,1fr)] md:grid-cols-[200px_1fr_minmax(200px,1fr)] border-b rule">
               <div className="px-6 py-4 legend">Event</div>
@@ -265,17 +313,17 @@ export default async function Page() {
             />
             <EventRow
               event="Hail ≥1.75″"
-              damage="Pool liners, fiberglass shells, covers, equipment. Solar panels (UL 1703 only certifies 1″)."
+              damage="Pool liners, fiberglass shells, covers, equipment."
               geography="National · esp. TX, CO, OK"
             />
             <EventRow
               event="Freeze events"
-              damage="Pumps, heaters, salt cells, pipes. Solar marginal."
+              damage="Pumps, heaters, salt cells, pipes."
               geography="TX, SE, mid-South"
             />
             <EventRow
               event="Wildfire perimeter"
-              damage="Equipment, ash cleanup. Solar replacement / re-roof."
+              damage="Equipment, ash cleanup."
               geography="CA, AZ, CO, OR"
             />
           </div>
@@ -288,55 +336,60 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* HOW IT WORKS — number-anchored cards -------------------- */}
+      {/* HOW IT WORKS — 4-stage funnel -------------------------- */}
       <section id="how" className="border-b rule bg-[var(--color-deep)] text-[var(--color-paper)]">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
-          <p className="legend-on-ink mb-6">/ Three steps</p>
+          <p className="legend-on-ink mb-6">/ Four stages</p>
           <h2 className="mb-16 max-w-3xl text-[var(--color-paper)]">
-            From market to CSV<br />
-            <span className="italic text-[var(--color-signal)]">in hours</span>, not days.
+            Detect → Filter → Mail → <span className="italic text-[var(--color-signal)]">Hand off</span>.
           </h2>
-          <ol className="grid md:grid-cols-3 gap-px bg-[var(--color-paper)]/15">
+          <ol className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--color-paper)]/15">
             <NumStep
               n="01"
               metric={liveCounties.toString()}
-              metricLabel={`live counties · ${statesCovered} states`}
-              title="Pick a market"
-              body="Choose a county. Missing markets get prioritized on request."
+              metricLabel={`live counties · ${compact(totalParcels)} parcels`}
+              title="Detect"
+              body="Visual ML on every parcel in your market. v32 model, 96.5% precision vs assessor — every pool gets a satellite tile and a confidence score."
             />
             <NumStep
               n="02"
-              metric="$15"
-              metricLabel="minimum pilot · Stripe"
-              title="Pay & launch"
-              body="Your county runs on demand — every single-family parcel scanned with current satellite imagery."
+              metric="6+"
+              metricLabel="government data sources"
+              title="Filter"
+              body="FEMA flood zone · ACS income tract · code violations · tax delinquency · NOAA storm history · disaster declarations. Bad-fit addresses pre-removed before mail."
             />
             <NumStep
               n="03"
-              metric="< 24h"
-              metricLabel="typical delivery"
-              title="Download leads"
-              body="CSV with current satellite photo on every row. Or push directly to Jobber, Housecall Pro, or HubSpot."
+              metric="$1.50"
+              metricLabel="per piece · all-in"
+              title="Mail"
+              body="Stannp prints and mails on your behalf. Design + print + USPS postage + tracking number + QR + reply mailer — included in the per-piece price."
+            />
+            <NumStep
+              n="04"
+              metric="3"
+              metricLabel="CRM destinations"
+              title="Hand off"
+              body="Responses route to Jobber, Housecall Pro, or HubSpot — tagged ‘Plot' as the source. Your reps work warm leads from the CRM they already use."
             />
           </ol>
         </div>
       </section>
 
-      {/* INTEGRATIONS -------------------------------------------- */}
+      {/* INTEGRATIONS ------------------------------------------- */}
       <section id="integrations" className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
           <div className="grid lg:grid-cols-12 gap-12 mb-16">
             <div className="lg:col-span-7">
               <p className="legend mb-6">/ Integrations</p>
               <h2 className="mb-6">
-                Land in the tools<br />
-                <span className="italic text-[var(--color-signal)]">your team already uses</span>.
+                The rails Plot ships on,<br />
+                <span className="italic text-[var(--color-signal)]">end to end</span>.
               </h2>
               <p className="text-lg leading-relaxed max-w-2xl">
-                <span className="em-dash" />Skip the CSV. Push verified leads straight to your CRM. Mail
-                postcards through our printer rail without leaving Plot. Pick
-                what fits your workflow — connect once, every future scan
-                routes automatically.
+                <span className="em-dash" />Postcard rail mails the piece. CRM rail routes the
+                response. Two integrations, one connect step each. Every
+                future campaign runs through the same plumbing.
               </p>
             </div>
             <div className="lg:col-span-5 lg:flex lg:items-end lg:justify-end">
@@ -348,19 +401,25 @@ export default async function Page() {
 
           <div className="grid md:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
             <IntegrationGroup
-              tag="● CRM destinations"
-              title="Send leads where the work happens."
-              body="Pool & solar shops run their day on Jobber or Housecall Pro. Marketing-mature ops layer HubSpot on top. We push to all three — leads land tagged ‘Plot' as the source, ready to dispatch."
-              vendors={["Jobber", "Housecall Pro", "HubSpot"]}
-            />
-            <IntegrationGroup
               tag="● Postcard rail"
-              title="Mail without the mailshop."
-              body="Stannp prints and mails on your behalf — USPS Marketing Mail, postage included. From $0.50 per piece. You set the design once, approve cost per batch."
+              title="The mail piece, done for you."
+              body="Stannp prints and mails on your behalf — USPS Marketing Mail, postage included. Design + print + tracking number + QR + reply mailer. Bundled into the $1.50 per-piece price."
               vendors={["Stannp"]}
               comingSoon={["Click2Mail", "PostGrid"]}
             />
+            <IntegrationGroup
+              tag="● CRM destinations"
+              title="Where the response lands."
+              body="Pool shops run their day on Jobber or Housecall Pro. Marketing-mature ops layer HubSpot on top. Responses land in the CRM tagged ‘Plot' as the source — your reps work warm leads from the tool they already use."
+              vendors={["Jobber", "Housecall Pro", "HubSpot"]}
+            />
           </div>
+
+          <p className="legend mt-6 text-[var(--color-muted)] max-w-3xl">
+            If you already run a door-to-door team, we can push the same
+            verified addresses into SalesRabbit or SPOTIO on request — Plot
+            doesn't supply canvassers, but the data plays nicely if you do.
+          </p>
         </div>
       </section>
 
@@ -392,127 +451,166 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* PRICING — layered table --------------------------------- */}
+      {/* PRICING — single primary unit + storm add-on ----------- */}
       <section id="pricing" className="border-b rule bg-[var(--color-paper)]/40">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
           <p className="legend mb-6">/ Pricing</p>
           <h2 className="mb-12 max-w-3xl">
-            Pay per lead.<br />
-            Pay per <span className="italic text-[var(--color-signal)]">event</span>.<br />
-            Nothing else.
+            One unit.<br />
+            <span className="italic text-[var(--color-signal)]">$1.50</span> per postcard delivered.
           </h2>
 
-          <div className="border rule bg-[var(--color-paper)]">
-            {/* Header row */}
-            <div className="grid grid-cols-[80px_minmax(160px,2fr)_minmax(140px,1fr)_minmax(140px,1fr)] md:grid-cols-[120px_minmax(220px,2fr)_minmax(180px,1fr)_minmax(180px,1fr)] border-b rule">
-              <div className="px-4 md:px-6 py-4 legend">Layer</div>
-              <div className="px-4 md:px-6 py-4 legend">What it is</div>
-              <div className="px-4 md:px-6 py-4 legend">Price</div>
-              <div className="px-4 md:px-6 py-4 legend">Status</div>
+          <div className="grid lg:grid-cols-3 gap-px bg-[var(--color-hairline)] border rule">
+            <div className="lg:col-span-2 bg-[var(--color-paper)] p-10">
+              <p className="legend text-[var(--color-signal)] mb-6">● Primary unit · live</p>
+              <p className="font-display text-7xl text-[var(--color-signal)] leading-none mb-2">
+                $1.50
+              </p>
+              <p className="legend mb-8">per postcard delivered · all-in</p>
+              <ul className="space-y-3 border-t rule pt-6 text-sm leading-relaxed">
+                <IncludedRow>Verified pool address generation (visual ML on parcel-level satellite)</IncludedRow>
+                <IncludedRow>Government-data quality filtering (FEMA · ACS · code violations · tax delinquency · storm history)</IncludedRow>
+                <IncludedRow>Postcard design (templated; per-batch approval)</IncludedRow>
+                <IncludedRow>Print + USPS Marketing Mail postage</IncludedRow>
+                <IncludedRow>Response capture: tracking number · QR code · reply mailer</IncludedRow>
+                <IncludedRow>CRM hand-off (Jobber · Housecall Pro · HubSpot)</IncludedRow>
+                <IncludedRow>
+                  <span className="text-[var(--color-signal)]">Refunded</span> per piece if the
+                  lead-row photo doesn't show a pool · no cap, no escalation
+                </IncludedRow>
+              </ul>
             </div>
-
-            <PricingRow
-              layer="L1"
-              what={(<><span className="font-medium">Verified base list</span> — addresses with visible pools (live) or solar arrays (Q3). Photo on every row.</>)}
-              price={(<><span className="font-display text-3xl text-[var(--color-signal)]">$0.15</span><span className="legend block mt-1">per lead · refunded if image doesn't back the claim</span></>)}
-              status="Live (pool) · Q3 (solar)"
-              statusAccent
-            />
-            <PricingRow
-              layer="L2"
-              what={(<><span className="font-medium">Storm-event alerts</span> — when NOAA hail / wind / freeze / wildfire data crosses an asset on your list, we notify you within 24 hours.</>)}
-              price={(<><span className="font-display text-3xl">$1</span><span className="legend block mt-1">per matched address per qualifying event · monthly cap TBD</span></>)}
-              status="Pool — this month"
-              statusAccent
-            />
-            <PricingRow
-              layer="L3"
-              what={(<><span className="font-medium text-[var(--color-muted)]">New-install alerts</span> — county permit / NEM filings spatial-joined to your service area. Catch the install window for cleaning + battery retrofit.</>)}
-              price={<span className="legend">Same shape · price TBD</span>}
-              status="Roadmap"
-              dim
-            />
+            <div className="bg-[var(--color-paper)] p-10">
+              <p className="legend text-[var(--color-muted)] mb-6">○ Add-on · subscription</p>
+              <p className="font-display text-5xl leading-none mb-2">$1</p>
+              <p className="legend mb-8">per matched address · per event</p>
+              <p className="text-sm leading-relaxed text-[var(--color-muted)] mb-6">
+                Storm-event alerts on addresses you've already mailed. NOAA
+                hail / wind / freeze / wildfire crosses your list, we ping
+                you within 24 hours. Monthly cap TBD.
+              </p>
+              <p className="legend text-[var(--color-muted)]">
+                Opt-in after first pilot.
+              </p>
+            </div>
           </div>
 
           <p className="legend mt-6 text-[var(--color-muted)] max-w-3xl">
-            No subscription. No minimums. No platform commission on the work
-            you win. Same{" "}
+            No subscription on the primary unit. No minimums beyond a pilot
+            run. No platform commission on the work you win. Same{" "}
             <Link href="#refund" className="text-[var(--color-ink)] underline underline-offset-4">
               refund commitment
             </Link>{" "}
-            covers both layers — refund any address where supplied evidence
-            doesn't back the claim.
+            covers every postcard.
           </p>
         </div>
       </section>
 
-      {/* VS BROKERS — attribute-row data table ------------------- */}
+      {/* VS — three-axis comparison ----------------------------- */}
       <section className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
-          <p className="legend mb-6">/ Vs brokers</p>
-          <h2 className="mb-12 max-w-4xl">
-            Same county.<br />
-            <span className="italic text-[var(--color-signal)]">Different data.</span>
+          <p className="legend mb-6">/ The economic story</p>
+          <h2 className="mb-6 max-w-4xl">
+            3× the per-piece price.<br />
+            <span className="italic text-[var(--color-signal)]">3–7× cheaper</span> per response.
           </h2>
+          <p className="text-lg leading-relaxed text-[var(--color-muted)] max-w-3xl mb-12">
+            <span className="em-dash" />Commodity direct mail blasts every house in a ZIP.
+            Lead-gen brokers sell the same lead 3–8 ways. Plot mails to
+            verified, enriched pool homeowners — exclusively. The math
+            falls out of the audience, not the printing.
+          </p>
 
-          <div className="border rule bg-[var(--color-paper)]">
-            {/* Header row */}
-            <div className="grid grid-cols-[minmax(140px,1fr)_1fr_1fr] md:grid-cols-[minmax(220px,1fr)_1fr_1fr] border-b rule">
-              <div className="px-6 py-5 legend">Attribute</div>
-              <div className="px-6 py-5 legend">Typical broker</div>
-              <div className="px-6 py-5 legend text-[var(--color-signal)]">Plot</div>
+          <div className="border rule bg-[var(--color-paper)] overflow-x-auto">
+            <div className="min-w-[820px]">
+              {/* Header row */}
+              <div className="grid grid-cols-[minmax(180px,1.2fr)_1fr_1fr_1fr] border-b rule">
+                <div className="px-6 py-5 legend">Attribute</div>
+                <div className="px-6 py-5 legend">Commodity direct mail</div>
+                <div className="px-6 py-5 legend">Lead-gen broker</div>
+                <div className="px-6 py-5 legend text-[var(--color-signal)]">Plot</div>
+              </div>
+
+              <ThreeAxisRow
+                label="Example"
+                a="Vistaprint-style"
+                b="Angi · HomeAdvisor · Modernize"
+                c="Plot"
+              />
+              <ThreeAxisRow
+                label="Audience"
+                a="Every house in a ZIP"
+                b="Self-reported homeowner intent"
+                c="Verified pool · enriched + filtered"
+                cAccent
+              />
+              <ThreeAxisRow
+                label="Exclusivity"
+                a="N/A — blast"
+                b="Sold 3–8 contractors / lead"
+                c="1:1 — never shared"
+                cAccent
+              />
+              <ThreeAxisRow
+                label="Per-piece / per-lead"
+                a={<span className="font-display text-3xl text-[var(--color-muted)]">$0.50</span>}
+                b={<span className="font-display text-3xl text-[var(--color-muted)]">$25–80</span>}
+                c={<span className="font-display text-3xl text-[var(--color-signal)]">$1.50</span>}
+                isPriceRow
+              />
+              <ThreeAxisRow
+                label="Typical response rate"
+                a="~0.5%"
+                b="Variable — 30%+ unreached"
+                c="~5% (warm + filtered)"
+                cAccent
+              />
+              <ThreeAxisRow
+                label="Cost per response"
+                a={<span className="font-display text-2xl text-[var(--color-muted)]">~$100</span>}
+                b={<span className="font-display text-2xl text-[var(--color-muted)]">$80–300</span>}
+                c={<span className="font-display text-2xl text-[var(--color-signal)]">~$30</span>}
+                isPriceRow
+                cAccent
+              />
+              <ThreeAxisRow
+                label="Refund policy"
+                a="None"
+                b="Capped · time-windowed · process-heavy"
+                c="Per-piece, no cap, 1 email"
+                cAccent
+              />
+              <ThreeAxisRow
+                label="Image on each row"
+                a="None"
+                b="None"
+                c="Current satellite tile · linked from dashboard"
+                cAccent
+              />
+              <ThreeAxisRow
+                label="Regulatory posture"
+                a="Standard postal"
+                b="2023 FTC $7.2M (HomeAdvisor) · 2025 VT AG $2M (Angi)"
+                c="Image-backed, evidence-tied"
+                cAccent
+              />
             </div>
-
-            <CompareRow
-              label="Records source"
-              broker="Assessor exports, often years out of date"
-              plot="Live satellite scan, refreshed per order"
-            />
-            <CompareRow
-              label="Pool flag accuracy"
-              broker="~70% (assessor drift over 5 years)"
-              plot="96.5% precision vs assessor"
-              plotAccent
-            />
-            <CompareRow
-              label="Image on each row"
-              broker="None"
-              plot="Current satellite tile · linked from CSV"
-              plotAccent
-            />
-            <CompareRow
-              label="Catches unpermitted pools"
-              broker="No — assessor never re-checks"
-              plot="Yes — model sees what the records missed"
-            />
-            <CompareRow
-              label="Refresh cadence"
-              broker="Never — one-shot CSV"
-              plot="Event-triggered · hurricane / hail / freeze / wildfire (this month)"
-              plotAccent
-            />
-            <CompareRow
-              label="Refund policy"
-              broker="None — they've never seen the property"
-              plot="$0.15 per wrong row · no cap, no escalation"
-              plotAccent
-            />
-            <CompareRow
-              label="Per-record price"
-              broker={<span className="font-display text-3xl text-[var(--color-muted)]">$0.10</span>}
-              plot={<span className="font-display text-3xl text-[var(--color-signal)]">$0.15</span>}
-              isPriceRow
-            />
           </div>
 
-          <p className="legend mt-6 text-[var(--color-muted)] max-w-2xl">
-            Broker comparison is industry typical, not a specific vendor. Plot
-            numbers are live as of {new Date().toLocaleDateString("en-US", {
+          <p className="legend mt-6 text-[var(--color-muted)] max-w-3xl">
+            Commodity DM benchmark: USPS Marketing Mail + 0.5% response is
+            industry-standard direct-mail math. Broker rates per Agent J's
+            demand-side research; FTC + VT AG settlements public record.
+            Plot numbers live as of {new Date().toLocaleDateString("en-US", {
               month: "long", year: "numeric",
             })} — see <Link href="/imagery-privacy" className="text-[var(--color-ink)] underline underline-offset-4">methodology ↗</Link>.
           </p>
         </div>
       </section>
+
+      {/* ROI CALCULATOR — interactive math after vs-brokers (component
+          renders its own section + kicker + headline) ------------- */}
+      <ROICalculator />
 
       {/* REFUND — promise quantified ----------------------------- */}
       <section id="refund" className="border-b rule">
@@ -524,16 +622,16 @@ export default async function Page() {
               <span className="italic text-[var(--color-signal)]">Quantified.</span>
             </h2>
             <p className="text-lg leading-relaxed text-[var(--color-muted)]">
-              <span className="em-dash" />The visual confirmation isn't a marketing line. It's a
-              refund promise. Brokers can't make it because they've never
-              looked at the property. We have. So we put numbers on it.
+              <span className="em-dash" />The only refund tied to the actual image of your
+              property. Brokers can't make this promise — they've never
+              looked at the parcel. We have. So we put numbers on it.
             </p>
           </div>
           <div className="lg:col-span-7 grid md:grid-cols-3 gap-px bg-[var(--color-hairline)] border rule">
             <RefundStat
-              value="$0.15"
-              label="refunded per wrong row"
-              note="Same price you paid — credited back."
+              value="$1.50"
+              label="refunded per wrong piece"
+              note="Same price you paid — credited back, per postcard mailed against a row whose photo doesn't show a pool."
             />
             <RefundStat
               value="No cap"
@@ -554,13 +652,15 @@ export default async function Page() {
       <section className="border-b rule bg-[var(--color-ink)] text-[var(--color-paper)]">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24 grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7">
-            <p className="legend-on-ink mb-6">/ Get access</p>
+            <p className="legend-on-ink mb-6">/ Run a pilot</p>
             <h2 className="mb-6 text-[var(--color-paper)]">
-              Self-serve. <span className="italic text-[var(--color-signal)]">$0.15</span> per
-              verified lead. Photo on every row.
+              Verified pool homeowners.{" "}
+              <span className="italic text-[var(--color-signal)]">$1.50</span> a postcard.
+              Refunded if the photo lies.
             </h2>
             <p className="text-lg text-[var(--color-paper)]/80">
-              Refund anything we can't prove.
+              Detection · enrichment · design · print · mail · CRM hand-off.
+              One per-piece price. Nothing else to manage.
             </p>
           </div>
           <div className="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3">
@@ -579,7 +679,10 @@ export default async function Page() {
 
 /** Pricing-table row: layer × description × price × status. `statusAccent`
  * lights the status cell signal-orange to mark "live" or "shipping this
- * month" rows. `dim` mutes everything for the L3 roadmap row. */
+ * month" rows. `dim` mutes everything for the L3 roadmap row.
+ *
+ * NOTE: not currently mounted — pricing section was rebuilt as a single
+ * primary-unit card. Helper kept in place for future layered SKUs. */
 function PricingRow({
   layer, what, price, status, statusAccent, dim,
 }: {
@@ -610,9 +713,7 @@ function PricingRow({
   );
 }
 
-/** Storm-overlay table row: event × damage × geography. Same shape both
- * verticals share once solar L1 ships, so this table outlives the
- * pool-only roadmap window. */
+/** Storm-overlay table row: event × damage × geography. */
 function EventRow({
   event, damage, geography,
 }: {
@@ -629,10 +730,9 @@ function EventRow({
   );
 }
 
-/** Vertical card: one of two side-by-side cards near the top of the page
- * showing the pool (live) vs solar (Q3) layered offering. Live cards get
- * accent color; coming cards stay muted but keep the same shape so the
- * roadmap reads as parallel rather than secondary. */
+/** Vertical card: kept in place from the prior 2-card layout. The new
+ * page uses a bespoke pool/solar layout above; helper preserved for the
+ * cleanup pass. */
 function VerticalCard({
   status, tag, title, icp, specs, cta,
 }: {
@@ -703,19 +803,14 @@ function BigStat({
   );
 }
 
-/** Compact number formatter — 2_041_141 → "2.04M", 142_000 → "142K". Used
- * in the hero so big numbers stay readable at display sizes. Below 10K we
- * keep full digits because "9,500 parcels" is more meaningful than "9.5K". */
+/** Compact number formatter — 2_041_141 → "2.04M", 142_000 → "142K". */
 function compact(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2).replace(/\.?0+$/, "")}M`;
   if (n >= 10_000) return `${Math.round(n / 1000)}K`;
   return n.toLocaleString();
 }
 
-/** AirDNA-style step card — leads with a metric, then the action. The
- * metric is the dominant text; the title + body explain it. Steps stack
- * across the dark "How it works" band; the live counties number ties
- * step 1 back to the hero stats. */
+/** AirDNA-style step card — leads with a metric, then the action. */
 function NumStep({
   n, metric, metricLabel, title, body,
 }: {
@@ -744,7 +839,10 @@ function NumStep({
 /** One row of the broker-vs-Plot comparison table. Default cell type is
  * a plain string; pass JSX for the price row to drop in display-sized
  * digits. `plotAccent` highlights the Plot side in signal-orange when the
- * difference is the headline. */
+ * difference is the headline.
+ *
+ * NOTE: not currently mounted — vs-section was rebuilt as a 3-axis
+ * comparison (`ThreeAxisRow`). Helper kept for future cleanup pass. */
 function CompareRow({
   label, broker, plot, plotAccent, isPriceRow,
 }: {
@@ -767,9 +865,36 @@ function CompareRow({
   );
 }
 
-/** Refund-section stat card: leads with the metric (typically $-amount or
- * "No cap"), then the label, then a footnote justifying it. `accent`
- * marks the no-cap card since unconditional refund is the brand wedge. */
+/** Three-axis comparison row: commodity DM × broker × Plot. Mirrors the
+ * shape of `CompareRow` but adds a third column so the page can show the
+ * full Section 5.5 economic story (price + response rate + cost-per-
+ * response) across the two real competitors. `cAccent` highlights the
+ * Plot column when the difference is the headline. */
+function ThreeAxisRow({
+  label, a, b, c, cAccent, isPriceRow,
+}: {
+  label: string;
+  a: React.ReactNode;
+  b: React.ReactNode;
+  c: React.ReactNode;
+  cAccent?: boolean;
+  isPriceRow?: boolean;
+}) {
+  return (
+    <div className={`grid grid-cols-[minmax(180px,1.2fr)_1fr_1fr_1fr] border-b rule last:border-b-0 ${
+      isPriceRow ? "bg-[var(--color-paper)]" : ""
+    }`}>
+      <div className="px-6 py-5 legend">{label}</div>
+      <div className="px-6 py-5 text-sm text-[var(--color-muted)]">{a}</div>
+      <div className="px-6 py-5 text-sm text-[var(--color-muted)]">{b}</div>
+      <div className={`px-6 py-5 text-sm ${
+        cAccent ? "text-[var(--color-ink)] font-medium" : ""
+      }`}>{c}</div>
+    </div>
+  );
+}
+
+/** Refund-section stat card. */
 function RefundStat({
   value, label, note, accent,
 }: {
@@ -820,5 +945,26 @@ function IntegrationGroup({
         ))}
       </ul>
     </div>
+  );
+}
+
+/** Spec row for the rebuilt pool vertical card — label left, value right.
+ * Keeps the same baseline-aligned shape as VerticalCard's internal dl. */
+function SpecRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 text-sm">
+      <dt className="legend whitespace-nowrap">{label}</dt>
+      <dd className="text-right">{value}</dd>
+    </div>
+  );
+}
+
+/** Pricing-card included-feature row. Signal-orange check + body. */
+function IncludedRow({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="flex items-baseline gap-3">
+      <span className="text-[var(--color-signal)] font-display flex-shrink-0">+</span>
+      <span>{children}</span>
+    </li>
   );
 }

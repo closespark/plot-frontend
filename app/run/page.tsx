@@ -3,7 +3,7 @@ import { OrderForm } from "@/components/OrderForm";
 import { listConnections, getVendor } from "@/lib/integrations";
 
 export const metadata = {
-  title: "Run a pilot · Plot",
+  title: "Start a campaign · Plot",
 };
 
 export const dynamic = "force-dynamic"; // counties list comes live from API
@@ -33,15 +33,16 @@ export default async function RunPage() {
     <section>
       <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-16 grid lg:grid-cols-12 gap-12">
         <div className="lg:col-span-7">
-          <p className="legend mb-6">/ Run a pilot</p>
+          <p className="legend mb-6">/ Start a campaign</p>
           <h1 className="mb-8">
-            Pick a county.<br />
-            <span className="italic text-[var(--color-signal)]">Get the list.</span>
+            Pick a market.<br />
+            <span className="italic text-[var(--color-signal)]">We mail.</span><br />
+            Responses hit your CRM.
           </h1>
           <p className="text-lg leading-relaxed max-w-2xl mb-10">
-            <span className="em-dash" />Every single-family parcel in your chosen county scanned with current
-            satellite imagery. CSV delivered by email within 24 hours of payment.
-            $15 minimum to start. $0.15 per verified lead beyond that.
+            <span className="em-dash" />$1.50 per postcard, all-in. Verified pool addresses,
+            designed creative, mailed for you, tracked, refunded if the photo lies.
+            Recurring monthly — cancel any time.
           </p>
 
           {apiError && (
@@ -53,7 +54,7 @@ export default async function RunPage() {
                 <a href="mailto:hello@get-plot.com" className="underline">
                   hello@get-plot.com
                 </a>{" "}
-                and we'll start your order manually.
+                and we'll start your campaign manually.
               </p>
             </div>
           )}
@@ -65,28 +66,38 @@ export default async function RunPage() {
           <div className="border rule bg-[var(--color-paper)] p-8">
             <p className="legend mb-6">/ What you get</p>
             <ul className="space-y-4">
-              <Bullet label="Address">
-                Site address + city + ZIP
+              <Bullet label="Verified pool address + photo">
+                The brand commitment — every lead row carries the satellite image
+                of the actual pool. If the photo doesn't back the claim, refund.
               </Bullet>
-              <Bullet label="Owner data">
-                Where assessor exposes it (~80% of counties)
+              <Bullet label="Designed postcard creative">
+                Stannp template with full address personalization. No design work
+                on your end.
               </Bullet>
-              <Bullet label="Coordinates">
-                Lat/lon for each verified pool
+              <Bullet label="Tracking number + QR code">
+                Every piece is uniquely tracked. Calls and scans flow back to Plot
+                and on to your CRM as response signal.
               </Bullet>
-              <Bullet label="Confidence">
-                v32 detection score
+              <Bullet label="Responses pushed to your CRM">
+                Jobber, Housecall Pro, or HubSpot. New leads land tagged{" "}
+                <span className="font-mono text-[var(--color-ink)]">Plot</span> as the source.
               </Bullet>
-              <Bullet label="Image URL">
-                Current satellite photo of the pool
+              <Bullet label="Government enrichment quality filter">
+                FEMA flood zones, ACS income tier, code violations, tax delinquency —
+                pre-removed from the mail list. Free, baked into $1.50.
+              </Bullet>
+              <Bullet label="Refund any wrong row, no cap">
+                One email. No tickets, no escalation. The whole reason this
+                business exists.
               </Bullet>
             </ul>
           </div>
           <div className="border rule bg-[var(--color-deep)] text-[var(--color-paper)] p-8 mt-px">
             <p className="legend-on-ink mb-4">/ Validity guarantee</p>
             <p className="leading-relaxed">
-              If a row's photo doesn't show a pool, flag it. We refund $0.15
-              per row. No tickets, no escalation.
+              Any postcard where the lead-row photo doesn't show a pool, flagged
+              within 30 days of delivery — we refund $1.50 per row. No cap. No
+              tickets. One email.
             </p>
           </div>
         </aside>

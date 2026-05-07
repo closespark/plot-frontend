@@ -10,7 +10,7 @@
  * `GET /v1/integrations` and wire the OAuth-start endpoints below.
  */
 
-export type IntegrationKind = "crm" | "postcard";
+export type IntegrationKind = "crm" | "postcard" | "canvassing";
 
 export type IntegrationVendor = {
   id: string;                 // factory key — must match api/crm or api/postcards
@@ -53,6 +53,43 @@ export const INTEGRATIONS: IntegrationVendor[] = [
     blurb: "Direct-mail postcard rail. We orchestrate the print + mail; you supply the design and pay per piece.",
     oauthStartPath: "/api/integrations/stannp/connect",
     docsUrl: "https://www.stannp.com/us/direct-mail-api/docs",
+  },
+  // Door-to-door canvassing rail — Plot pushes leads into the SMB's
+  // door-knocking ops platform. Reps disposition at the door, dispositions
+  // flow back to mark leads "knocked: interested / not home / not interested".
+  // SMB SMB ICP runs door-hangers + knocking on pool/solar territory; this
+  // is the third outbound rail alongside CRM (sales pipeline) and postcard.
+  {
+    id: "salesrabbit",
+    kind: "canvassing",
+    name: "SalesRabbit",
+    blurb: "Most-used D2D platform across pool / solar / pest. Lead push + GPS-verified dispositions back. DataGrid AI lead scoring optional.",
+    oauthStartPath: "/api/integrations/salesrabbit/connect",
+    docsUrl: "https://help.salesrabbit.com/api",
+  },
+  {
+    id: "spotio",
+    kind: "canvassing",
+    name: "SPOTIO",
+    blurb: "Field-sales activity platform with deep CRM integrations. API-first; pushes leads into rep territories with route optimization.",
+    oauthStartPath: "/api/integrations/spotio/connect",
+    docsUrl: "https://www.spotio.com/integrations/",
+  },
+  {
+    id: "knockio",
+    kind: "canvassing",
+    name: "Knockio",
+    blurb: "Solar-and-roofing-focused D2D ops. Real-time GPS, lead routing, rep territory mapping. Lighter weight than SalesRabbit.",
+    oauthStartPath: "/api/integrations/knockio/connect",
+    docsUrl: "https://knockio.com/api",
+  },
+  {
+    id: "ecanvasser",
+    kind: "canvassing",
+    name: "Ecanvasser",
+    blurb: "RESTful D2D API with territory + script management. Originated political; widely used in solar + service. Public API gated by support request.",
+    oauthStartPath: "/api/integrations/ecanvasser/connect",
+    docsUrl: "https://ecanvasser.com/api",
   },
 ];
 

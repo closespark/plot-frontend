@@ -17,6 +17,7 @@ export function Header() {
           <Link href="/#integrations" className="hover:text-[var(--color-ink)]">Integrations</Link>
           <Link href="/#pricing" className="hover:text-[var(--color-ink)]">Pricing</Link>
           <Link href={"/settings/integrations" as any} className="hover:text-[var(--color-ink)]">Settings</Link>
+          <Link href={"/settings/storms" as any} className="hover:text-[var(--color-ink)]">Storms</Link>
         </nav>
         <Link href="/run" className="btn-ink">
           Get access →
