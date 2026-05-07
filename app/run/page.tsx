@@ -41,7 +41,7 @@ export default async function RunPage() {
           </h1>
           <p className="text-lg leading-relaxed max-w-2xl mb-10">
             <span className="em-dash" />$1.50 per postcard, all-in. Verified pool addresses,
-            designed creative, mailed for you, tracked, refunded if the photo lies.
+            designed creative, mailed for you, tracked. You approve every row before we mail.
             Recurring monthly — cancel any time.
           </p>
 
@@ -67,8 +67,12 @@ export default async function RunPage() {
             <p className="legend mb-6">/ What you get</p>
             <ul className="space-y-4">
               <Bullet label="Verified pool address + photo">
-                The brand commitment — every lead row carries the satellite image
-                of the actual pool. If the photo doesn't back the claim, refund.
+                Every lead row carries the satellite image of the actual pool —
+                the brand commitment that everything else hangs off.
+              </Bullet>
+              <Bullet label="You review every row before we mail">
+                Photo, address, lat/lon, enrichment fields per row. Reject
+                anything wrong. We mail only what you approve.
               </Bullet>
               <Bullet label="Designed postcard creative">
                 Stannp template with full address personalization. No design work
@@ -86,18 +90,16 @@ export default async function RunPage() {
                 FEMA flood zones, ACS income tier, code violations, tax delinquency —
                 pre-removed from the mail list. Free, baked into $1.50.
               </Bullet>
-              <Bullet label="Refund any wrong row, no cap">
-                One email. No tickets, no escalation. The whole reason this
-                business exists.
-              </Bullet>
             </ul>
           </div>
           <div className="border rule bg-[var(--color-deep)] text-[var(--color-paper)] p-8 mt-px">
-            <p className="legend-on-ink mb-4">/ Validity guarantee</p>
+            <p className="legend-on-ink mb-4">/ Quality control</p>
             <p className="leading-relaxed">
-              Any postcard where the lead-row photo doesn't show a pool, flagged
-              within 30 days of delivery — we refund $1.50 per row. No cap. No
-              tickets. One email.
+              Every row in your dashboard ships with the satellite photo of the
+              parcel. Reject anything that doesn't look right; we mail only
+              what you approve. You only pay for what mails. No refunds, no
+              escalation — you've already seen the photo before any postcards
+              ship.
             </p>
           </div>
         </aside>

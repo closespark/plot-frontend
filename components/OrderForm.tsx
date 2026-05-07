@@ -153,8 +153,8 @@ export function OrderForm({
           })}
         </div>
         <p className="text-sm text-[var(--color-muted)] mt-3">
-          Recurring monthly. Cancel any time. Refund any postcard whose lead-row photo
-          doesn't show a pool — flagged within 30 days, $1.50/row, no cap.
+          Recurring monthly. Cancel any time. Review every row in your dashboard
+          before we mail — reject anything wrong, pay only for what mails.
         </p>
       </div>
 
@@ -216,7 +216,7 @@ export function OrderForm({
           {pending ? "Starting…" : `Start mailing — ${VOLUME_TIERS.find((t) => t.value === volume)?.monthly}/mo →`}
         </button>
         <p className="legend pt-4">
-          You'll be redirected to Stripe Checkout. Cancel any time. Refund any wrong row.
+          You'll be redirected to Stripe Checkout. Cancel any time. You review every batch before it mails.
         </p>
       </div>
     </form>

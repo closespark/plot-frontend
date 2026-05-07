@@ -9,7 +9,7 @@
  */
 import Link from "next/link";
 import { ProofTile } from "@/components/ProofTile";
-import { naipTileUrl } from "@/lib/naip";
+import { mapboxTileUrl } from "@/lib/mapbox";
 
 const SCOTTSDALE_PINS = [
   { x: 67, y: 3,  n: 1 },
@@ -76,13 +76,13 @@ export default function ExamplesPage() {
         subtitle="5 pools across 12 parcels. ~35% pool penetration is typical for AZ luxury markets."
         tile={
           <ProofTile
-            src={naipTileUrl({ lat: 33.6053, lon: -111.9214, label: "scottsdale-pool-sample" })}
+            src={mapboxTileUrl({ lat: 33.6053, lon: -111.9214, label: "scottsdale-pool-sample" })}
             alt="Scottsdale residential block with 5 verified pools"
             pins={SCOTTSDALE_PINS}
             className="aspect-square"
           />
         }
-        caption="SCOTTSDALE · NAIP 0.6m · 5 verified pools"
+        caption="SCOTTSDALE · Mapbox satellite z=20 · 5 verified pools"
         notes={[
           "Each numbered pin is a real backyard pool surfaced by blue-water clustering.",
           "Production runs YOLO11m on the same imagery — picks up covered pools and empty pools too, not just blue water.",
@@ -97,13 +97,13 @@ export default function ExamplesPage() {
         subtitle="Tighter lots, much higher pool density — typical of post-2000 Sun Belt subdivisions."
         tile={
           <ProofTile
-            src={naipTileUrl({ lat: 33.5722, lon: -112.1391, label: "glendale-pool-sample" })}
+            src={mapboxTileUrl({ lat: 33.5722, lon: -112.1391, label: "glendale-pool-sample" })}
             alt="Glendale subdivision with 12+ verified pools"
             pins={GLENDALE_PINS}
             className="aspect-square"
           />
         }
-        caption="GLENDALE · NAIP 0.6m · 5 high-confidence pools shown"
+        caption="GLENDALE · Mapbox satellite z=20 · 5 high-confidence pools shown"
         notes={[
           "The aerial shows more pools than are pinned here — we only display detections that pass strict color + size thresholds. Production runs YOLO11m, which catches the harder cases (covered pools, off-blue water) that this gallery's static thresholds skip.",
           "This is what most Phoenix metro residential blocks look like — pool penetration of 50–80% is common for the Plot ICP (single-family, post-1990 build).",

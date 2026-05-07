@@ -33,9 +33,13 @@ export function Footer() {
       <div className="border-t rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <p className="legend">
-            Verified property data · $0.15 per lead · Photo on every row
+            Verified property data · Photo on every row
           </p>
-          <p className="legend">© 2026 Plot</p>
+          <p className="legend">
+            Imagery © <a href="https://www.mapbox.com/about/maps/" className="hover:text-[var(--color-signal)]" target="_blank" rel="noopener noreferrer">Mapbox</a>
+            {" "}© <a href="https://www.openstreetmap.org/copyright" className="hover:text-[var(--color-signal)]" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
+            {" "}· © 2026 Plot
+          </p>
         </div>
       </div>
     </footer>
