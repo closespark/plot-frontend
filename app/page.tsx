@@ -50,20 +50,23 @@ export default async function Page() {
 
   return (
     <>
-      {/* HERO — stats-heavy, AirDNA-shape ----------------------- */}
+      {/* HERO — platform-wide, layered narrative ---------------- */}
       <section className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 pt-16 pb-20">
           <p className="legend mb-8">
-            Verified property data <span className="text-[var(--color-signal)]">·</span>{" "}
-            Updated on every order
+            Verified property data + event triggers
+            <span className="text-[var(--color-signal)]"> · </span>
+            Self-serve
           </p>
           <h1 className="mb-10 max-w-5xl">
-            Every backyard pool in your county.<br />
-            <span className="italic text-[var(--color-signal)]">Indexed</span>, photographed, $0.15.
+            Every pool, photographed.<br />
+            Every storm,{" "}
+            <span className="italic text-[var(--color-signal)]">mapped</span>.
           </h1>
 
-          {/* Headline number row — the AirDNA "$54,300 avg revenue" move.
-              Live aggregates first, brand commitments second. */}
+          {/* Headline number row — live aggregates first, brand commitments
+              second. Stat strip mirrors the layered product: L1 base list
+              numbers + L2 (storm overlay) preview line below. */}
           <dl className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[var(--color-hairline)] border rule">
             <BigStat
               value={totalParcels > 0 ? compact(totalParcels) : "—"}
@@ -84,10 +87,60 @@ export default async function Page() {
             />
           </dl>
 
+          {/* Roadmap line — sits under the stat strip so the L2 commitment
+              reads as honest forecast, not buried roadmap. */}
+          <p className="legend mt-6 max-w-3xl">
+            <span className="text-[var(--color-signal)]">●</span> Pool storm
+            overlay (hurricane / hail / freeze / wildfire) shipping this
+            month <span className="text-[var(--color-muted)]">·</span>{" "}
+            <span className="text-[var(--color-muted)]">○</span> Solar base
+            list shipping Q3
+          </p>
+
           <div className="flex flex-col sm:flex-row gap-3 mt-10">
             <Link href="/run" className="btn-ink">Run a pilot →</Link>
             <Link href="#explorer" className="btn-ghost">Browse markets ↓</Link>
             <Link href="/examples" className="btn-ghost">See a sample scan ↓</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* VERTICAL ROW — pool live, solar Q3 ---------------------- */}
+      <section className="border-b rule">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-16">
+          <p className="legend mb-6">/ Two verticals · one platform</p>
+          <h2 className="mb-12 max-w-3xl">
+            Pick the assets you sell to.<br />
+            <span className="italic text-[var(--color-signal)]">Same data spine.</span>
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-px bg-[var(--color-hairline)] border rule">
+            <VerticalCard
+              status="live"
+              tag="● Pool"
+              title="Verified pool detection"
+              icp="Pool service · cleaning · repair · screen-enclosure restoration"
+              specs={[
+                { label: "Base list (L1)", value: "$0.15/lead" },
+                { label: "Coverage", value: `${liveCounties} counties · ${compact(totalParcels)} parcels` },
+                { label: "Storm overlay (L2)", value: "Hurricane / freeze / hail" },
+                { label: "L2 ships", value: "This month" },
+              ]}
+              cta={{ label: "Run a pool pilot →", href: "/run" }}
+            />
+            <VerticalCard
+              status="coming"
+              tag="○ Solar"
+              title="Verified solar-array detection"
+              icp="Panel cleaning · maintenance · post-storm repair · battery retrofit"
+              specs={[
+                { label: "Base list (L1)", value: "$0.15/lead · Q3" },
+                { label: "Coverage", value: "National (planned)" },
+                { label: "Storm overlay (L2)", value: "Hail / wind / wildfire" },
+                { label: "L2 ships", value: "After L1" },
+              ]}
+              cta={{ label: "Get early access →", href: "mailto:hello@get-plot.com?subject=Plot%20solar%20early%20access" }}
+            />
           </div>
         </div>
       </section>
@@ -168,6 +221,70 @@ export default async function Page() {
               GLENDALE · POOL DETECTION · CONF 0.92 · MAY 2026 IMAGERY
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* STORM OVERLAY — L2 product explanation ------------------ */}
+      <section id="storm-overlay" className="border-b rule">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
+          <div className="grid lg:grid-cols-12 gap-12 mb-12">
+            <div className="lg:col-span-7">
+              <p className="legend mb-6">/ Storm overlay · L2</p>
+              <h2 className="mb-6">
+                The day the storm hits,<br />
+                <span className="italic text-[var(--color-signal)]">we already know whose</span>.
+              </h2>
+              <p className="text-lg leading-relaxed text-[var(--color-muted)] max-w-2xl">
+                <span className="em-dash" />Layer one tells you which homes have pools and panels.
+                Layer two watches NOAA hail / wind / wildfire / freeze data
+                and notifies you within 24 hours when a qualifying event
+                passes over assets you've already bought. Show up first.
+                Win the work.
+              </p>
+            </div>
+            <div className="lg:col-span-5 lg:flex lg:items-end lg:justify-end">
+              <span className="legend text-[var(--color-signal)]">
+                ● Pool storm overlay shipping this month
+              </span>
+            </div>
+          </div>
+
+          {/* Event × damage × geography table — content lifted from the
+              product strategy doc; same table both verticals will share
+              once solar L1 ships. */}
+          <div className="border rule bg-[var(--color-paper)]">
+            <div className="grid grid-cols-[140px_1fr_minmax(160px,1fr)] md:grid-cols-[200px_1fr_minmax(200px,1fr)] border-b rule">
+              <div className="px-6 py-4 legend">Event</div>
+              <div className="px-6 py-4 legend">What it damages</div>
+              <div className="px-6 py-4 legend">Geography</div>
+            </div>
+            <EventRow
+              event="Hurricane wind"
+              damage="Pool screen enclosures · $20–50K AOV. Solar racking, panel mounts."
+              geography="FL, GA, SC, TX coastal"
+            />
+            <EventRow
+              event="Hail ≥1.75″"
+              damage="Pool liners, fiberglass shells, covers, equipment. Solar panels (UL 1703 only certifies 1″)."
+              geography="National · esp. TX, CO, OK"
+            />
+            <EventRow
+              event="Freeze events"
+              damage="Pumps, heaters, salt cells, pipes. Solar marginal."
+              geography="TX, SE, mid-South"
+            />
+            <EventRow
+              event="Wildfire perimeter"
+              damage="Equipment, ash cleanup. Solar replacement / re-roof."
+              geography="CA, AZ, CO, OR"
+            />
+          </div>
+
+          <p className="legend mt-6 text-[var(--color-muted)] max-w-3xl">
+            Data sources: NOAA SPC + NWS MESH (hail) · NHC tracks (hurricane) ·
+            NWS LSRs (freeze) · USFS / Cal Fire / NIFC perimeters (wildfire).
+            All free, public, ~24-hour latency post-event.
+          </p>
         </div>
       </section>
 
@@ -275,8 +392,62 @@ export default async function Page() {
         </div>
       </section>
 
+      {/* PRICING — layered table --------------------------------- */}
+      <section id="pricing" className="border-b rule bg-[var(--color-paper)]/40">
+        <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
+          <p className="legend mb-6">/ Pricing</p>
+          <h2 className="mb-12 max-w-3xl">
+            Pay per lead.<br />
+            Pay per <span className="italic text-[var(--color-signal)]">event</span>.<br />
+            Nothing else.
+          </h2>
+
+          <div className="border rule bg-[var(--color-paper)]">
+            {/* Header row */}
+            <div className="grid grid-cols-[80px_minmax(160px,2fr)_minmax(140px,1fr)_minmax(140px,1fr)] md:grid-cols-[120px_minmax(220px,2fr)_minmax(180px,1fr)_minmax(180px,1fr)] border-b rule">
+              <div className="px-4 md:px-6 py-4 legend">Layer</div>
+              <div className="px-4 md:px-6 py-4 legend">What it is</div>
+              <div className="px-4 md:px-6 py-4 legend">Price</div>
+              <div className="px-4 md:px-6 py-4 legend">Status</div>
+            </div>
+
+            <PricingRow
+              layer="L1"
+              what={(<><span className="font-medium">Verified base list</span> — addresses with visible pools (live) or solar arrays (Q3). Photo on every row.</>)}
+              price={(<><span className="font-display text-3xl text-[var(--color-signal)]">$0.15</span><span className="legend block mt-1">per lead · refunded if image doesn't back the claim</span></>)}
+              status="Live (pool) · Q3 (solar)"
+              statusAccent
+            />
+            <PricingRow
+              layer="L2"
+              what={(<><span className="font-medium">Storm-event alerts</span> — when NOAA hail / wind / freeze / wildfire data crosses an asset on your list, we notify you within 24 hours.</>)}
+              price={(<><span className="font-display text-3xl">$1</span><span className="legend block mt-1">per matched address per qualifying event · monthly cap TBD</span></>)}
+              status="Pool — this month"
+              statusAccent
+            />
+            <PricingRow
+              layer="L3"
+              what={(<><span className="font-medium text-[var(--color-muted)]">New-install alerts</span> — county permit / NEM filings spatial-joined to your service area. Catch the install window for cleaning + battery retrofit.</>)}
+              price={<span className="legend">Same shape · price TBD</span>}
+              status="Roadmap"
+              dim
+            />
+          </div>
+
+          <p className="legend mt-6 text-[var(--color-muted)] max-w-3xl">
+            No subscription. No minimums. No platform commission on the work
+            you win. Same{" "}
+            <Link href="#refund" className="text-[var(--color-ink)] underline underline-offset-4">
+              refund commitment
+            </Link>{" "}
+            covers both layers — refund any address where supplied evidence
+            doesn't back the claim.
+          </p>
+        </div>
+      </section>
+
       {/* VS BROKERS — attribute-row data table ------------------- */}
-      <section id="pricing" className="border-b rule">
+      <section className="border-b rule">
         <div className="mx-auto max-w-[1400px] px-6 lg:px-10 py-24">
           <p className="legend mb-6">/ Vs brokers</p>
           <h2 className="mb-12 max-w-4xl">
@@ -313,6 +484,12 @@ export default async function Page() {
               label="Catches unpermitted pools"
               broker="No — assessor never re-checks"
               plot="Yes — model sees what the records missed"
+            />
+            <CompareRow
+              label="Refresh cadence"
+              broker="Never — one-shot CSV"
+              plot="Event-triggered · hurricane / hail / freeze / wildfire (this month)"
+              plotAccent
             />
             <CompareRow
               label="Refund policy"
@@ -397,6 +574,98 @@ export default async function Page() {
         </div>
       </section>
     </>
+  );
+}
+
+/** Pricing-table row: layer × description × price × status. `statusAccent`
+ * lights the status cell signal-orange to mark "live" or "shipping this
+ * month" rows. `dim` mutes everything for the L3 roadmap row. */
+function PricingRow({
+  layer, what, price, status, statusAccent, dim,
+}: {
+  layer: string;
+  what: React.ReactNode;
+  price: React.ReactNode;
+  status: string;
+  statusAccent?: boolean;
+  dim?: boolean;
+}) {
+  return (
+    <div className={`grid grid-cols-[80px_minmax(160px,2fr)_minmax(140px,1fr)_minmax(140px,1fr)] md:grid-cols-[120px_minmax(220px,2fr)_minmax(180px,1fr)_minmax(180px,1fr)] border-b rule last:border-b-0 ${
+      dim ? "opacity-60" : ""
+    }`}>
+      <div className={`px-4 md:px-6 py-6 font-display text-2xl ${
+        statusAccent ? "text-[var(--color-signal)]" : "text-[var(--color-muted)]"
+      }`}>
+        {layer}
+      </div>
+      <div className="px-4 md:px-6 py-6 text-sm leading-relaxed">{what}</div>
+      <div className="px-4 md:px-6 py-6">{price}</div>
+      <div className="px-4 md:px-6 py-6">
+        <span className={`legend ${statusAccent ? "text-[var(--color-signal)]" : ""}`}>
+          {status}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** Storm-overlay table row: event × damage × geography. Same shape both
+ * verticals share once solar L1 ships, so this table outlives the
+ * pool-only roadmap window. */
+function EventRow({
+  event, damage, geography,
+}: {
+  event: string;
+  damage: string;
+  geography: string;
+}) {
+  return (
+    <div className="grid grid-cols-[140px_1fr_minmax(160px,1fr)] md:grid-cols-[200px_1fr_minmax(200px,1fr)] border-b rule last:border-b-0">
+      <div className="px-6 py-5 font-display text-lg leading-snug">{event}</div>
+      <div className="px-6 py-5 text-sm leading-relaxed text-[var(--color-muted)]">{damage}</div>
+      <div className="px-6 py-5 text-sm legend">{geography}</div>
+    </div>
+  );
+}
+
+/** Vertical card: one of two side-by-side cards near the top of the page
+ * showing the pool (live) vs solar (Q3) layered offering. Live cards get
+ * accent color; coming cards stay muted but keep the same shape so the
+ * roadmap reads as parallel rather than secondary. */
+function VerticalCard({
+  status, tag, title, icp, specs, cta,
+}: {
+  status: "live" | "coming";
+  tag: string;
+  title: string;
+  icp: string;
+  specs: { label: string; value: string }[];
+  cta: { label: string; href: string };
+}) {
+  const isLive = status === "live";
+  return (
+    <div className={`p-8 lg:p-10 ${isLive ? "bg-[var(--color-paper)]" : "bg-[var(--color-paper)]/60"}`}>
+      <div className="flex items-baseline justify-between mb-6">
+        <p className={`legend ${isLive ? "text-[var(--color-signal)]" : "text-[var(--color-muted)]"}`}>
+          {tag}
+        </p>
+        <p className="legend">{isLive ? "Live" : "Coming Q3"}</p>
+      </div>
+      <h3 className={`mb-3 ${isLive ? "" : "text-[var(--color-muted)]"}`}>{title}</h3>
+      <p className="text-sm leading-relaxed text-[var(--color-muted)] mb-8">{icp}</p>
+      <dl className="space-y-3 border-t rule pt-6">
+        {specs.map((s) => (
+          <div key={s.label} className="flex items-baseline justify-between gap-4 text-sm">
+            <dt className="legend">{s.label}</dt>
+            <dd className={`text-right ${isLive ? "" : "text-[var(--color-muted)]"}`}>{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <a href={cta.href} className={`mt-8 inline-block ${isLive ? "btn-ink" : "btn-ghost"}`}>
+        {cta.label}
+      </a>
+    </div>
   );
 }
 
